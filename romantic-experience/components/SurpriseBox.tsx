@@ -70,7 +70,7 @@ export default function SurpriseBox() {
                 Unlimited smiles,{"\n"}
                 lots of happiness,{"\n"}
                 and an unforgettable birthday.{"\n\n"}
-                Have the best day ever! 🎉
+                Have the best day ever !! 🎉
               </p>
             </motion.div>
           )}
