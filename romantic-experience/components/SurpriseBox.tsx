@@ -36,7 +36,7 @@ export default function SurpriseBox() {
               className="text-center space-y-4"
             >
               <div className="text-4xl">✨✨</div>
-              <h4 className="font-serif text-2xl text-white">Today's Reward</h4>
+              <h4 className="font-serif text-2xl text-white">Today&apos;s Reward</h4>
               <p className="font-mono text-xs text-neutral-400 uppercase tracking-widest max-w-xs">
                
 Unlimited smiles,
