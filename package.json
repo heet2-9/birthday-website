@@ -1,0 +1,10 @@
+{
+  "name": "birthday-website",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix romantic-experience run dev",
+    "build": "npm --prefix romantic-experience run build",
+    "start": "npm --prefix romantic-experience run start",
+    "lint": "npm --prefix romantic-experience run lint"
+  }
+}
