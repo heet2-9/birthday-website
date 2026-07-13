@@ -26,7 +26,7 @@ export default function Hero() {
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="font-serif text-5xl md:text-8xl tracking-tight leading-none bg-gradient-to-b from-white to-neutral-400 bg-clip-text text-transparent"
         >
-         Happiest Birthday✨
+         Happiest Birthday Dear✨
         </motion.h1>
 
         <motion.p

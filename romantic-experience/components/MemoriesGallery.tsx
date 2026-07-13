@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 
 const MEMORIES = [
-  { id: 1, src: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&q=80&w=800", title: "Midnight Echoes" },
-  { id: 2, src: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=800", title: "Golden Hour Escape" },
-  { id: 3, src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800", title: "Parisian Walks" },
-  { id: 4, src: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?auto=format&fit=crop&q=80&w=800", title: "Winter Solstice" },
+  { id: 1, src: "/images/aarya1.jpeg", title: "The First Smile" },
+  { id: 2, src: "/images/aarya2.jpeg", title: "Best Memories" },
+  { id: 3, src: "/images/aarya3.jpeg", title: "Fun Times" },
+  { id: 4, src: "/images/aarya4.jpeg", title: "Birthday Moments" },
 ];
 
 export default function MemoriesGallery() {
