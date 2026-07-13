@@ -35,7 +35,7 @@ export default function Hero() {
           transition={{ delay: 0.5, duration: 1 }}
           className="font-sans text-neutral-400 text-sm md:text-lg tracking-widest max-w-lg mx-auto uppercase"
         >
-          
+                                                                                                              
         </motion.p>
       </motion.div>
 
