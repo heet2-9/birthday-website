@@ -4,8 +4,8 @@ import SmoothScroll from "@/components/SmoothScroll";
 import CanvasParticles from "@/components/CanvasParticles";
 
 export const metadata: Metadata = {
-  title: "Aura of Us | An Interactive Journey",
-  description: "A luxury high-end interactive experience crafted for us.",
+  title: "Happy Birthday Aarya !!",
+  description: "A Surprise Birthday Experience for Aarya",
 };
 
 export default function RootLayout({
