@@ -24,7 +24,7 @@ export default function FinalScene() {
         </motion.div>
         
         <h2 className="font-serif text-4xl md:text-7xl tracking-tight text-white">
-          Hope you enjoyed this little surprise, Aarya! 🎉
+          Hope you enjoyed this surprise, Aarya! 🎉
         </h2>
         
         <p className="font-sans text-neutral-400 text-xs md:text-sm tracking-[0.3em] uppercase max-w-md mx-auto leading-relaxed">
