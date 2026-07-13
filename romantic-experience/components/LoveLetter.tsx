@@ -28,9 +28,9 @@ Happy Birthday! 🎉
 
 I just wanted to make something a little different this year—something you could keep and look back on whenever you wanted.
 
-Thank you for being such an amazing friend. Whether it's the random conversations, the endless laughs, or the little moments that somehow become unforgettable memories, I'm really grateful for our friendship.
+Thank you for being such an amazing friend. Whether it's the random conversations, the endless laughs, or the little moments that somehow become unforgettable memories, I&apos;m lucky to have a friend like you.
 
-I hope this year brings you everything you're wishing for—lots of happiness, good health, exciting opportunities, and countless reasons to smile.
+I hope this year brings you everything you&apos;re wishing for—lots of happiness, good health, exciting opportunities, and countless reasons to smile.
 
 Never stop being the kind, funny, and wonderful person you are.
 
