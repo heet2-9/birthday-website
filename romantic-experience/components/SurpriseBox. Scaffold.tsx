@@ -10,7 +10,7 @@ export default function SurpriseBox() {
   return (
     <section className="h-screen w-full flex flex-col justify-center items-center px-4 relative">
       <h3 className="font-serif text-3xl md:text-5xl text-center mb-12 tracking-tight">
-        A Token of <span className="italic text-accent">Gratitude</span>
+       A little<span className="italic text-accent">Birthday Gift</span>
       </h3>
 
       <div className="relative flex items-center justify-center h-64 w-64">
@@ -35,10 +35,14 @@ export default function SurpriseBox() {
               transition={{ type: "spring", stiffness: 100, damping: 15 }}
               className="text-center space-y-4"
             >
-              <div className="text-4xl">✨🎟️✨</div>
-              <h4 className="font-serif text-2xl text-white">The Golden Ticket</h4>
+              <div className="text-4xl">✨✨</div>
+              <h4 className="font-serif text-2xl text-white">Today's Reward</h4>
               <p className="font-mono text-xs text-neutral-400 uppercase tracking-widest max-w-xs">
-                Good for one lifetime reservation of cinematic getaways & infinite laughs.
+                Unlimited smiles,
+lots of happiness,
+and an unforgettable birthday.
+
+Have the best day ever! 🎉
               </p>
             </motion.div>
           )}

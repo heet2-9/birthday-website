@@ -24,11 +24,14 @@ export default function FinalScene() {
         </motion.div>
         
         <h2 className="font-serif text-4xl md:text-7xl tracking-tight text-white">
-          Hope you enjoyed this surprise, Aarya! 🎉
+          Hope you loved your little birthday surprise, Aarya! 🎉
         </h2>
         
         <p className="font-sans text-neutral-400 text-xs md:text-sm tracking-[0.3em] uppercase max-w-md mx-auto leading-relaxed">
-          Thank you for exploring this architecture. May our telemetry run perfectly indefinitely.
+          Keep smiling, keep shining,
+and have an amazing year ahead.
+
+Happy Birthday once again! ✨
         </p>
       </motion.div>
     </section>
