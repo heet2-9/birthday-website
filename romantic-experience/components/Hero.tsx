@@ -71,7 +71,7 @@ export default function Hero() {
             >
               <div className="text-center space-y-3 mt-12">
                 <h1 className="font-serif text-4xl md:text-6xl text-white tracking-tight">
-                  Let's <span className="italic text-accent bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-light text-glow">Celebrate</span>
+                  Let&apos;s <span className="italic text-accent bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-light text-glow">Celebrate</span>
                 </h1>
                 <p className="font-mono text-xs text-neutral-400 uppercase tracking-widest">
                   {stage === "idle" ? "Click the rocket to begin the celebration" : "Liftoff initiated..."}
