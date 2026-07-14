@@ -48,17 +48,18 @@ export default function NameReveal() {
     };
   }, []);
 
-  const nameStr = "AARYA";
+  // The new cinematic transition text! (You can change this to anything you like)
+  const displayString = "ONLY FOR YOU";
 
   return (
-    <div ref={sectionRef} className="relative h-screen w-full flex items-center justify-center bg-[#050505] overflow-hidden">
-      {/* Decorative Matrix/Pink Aura Dots */}
+    <div ref={sectionRef} className="relative h-screen w-full flex items-center justify-center bg-[#030303] overflow-hidden">
+      {/* Subtle background matrix/particle effect */}
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#ff2a85_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
       
-      <h2 ref={textRef} className="font-serif text-[12vw] tracking-wider text-glow font-bold text-white z-20 flex select-none">
-        {nameStr.split("").map((char, index) => (
+      <h2 ref={textRef} className="font-serif text-[8vw] md:text-[6vw] tracking-[0.2em] text-glow font-bold text-white z-20 flex select-none flex-wrap justify-center px-4 text-center">
+        {displayString.split("").map((char, index) => (
           <span key={index} className="char inline-block">
-            {char}
+            {char === " " ? "\u00A0" : char}
           </span>
         ))}
       </h2>
