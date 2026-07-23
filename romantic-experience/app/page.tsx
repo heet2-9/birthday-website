@@ -1,41 +1,64 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import LoadingScreen from "../components/LoadingScreen";
-import Hero from "../components/Hero"; 
-import NameReveal from "../components/NameReveal";
-import LoveLetter from "../components/LoveLetter";
-import MemoriesGallery from "../components/MemoriesGallery";
-import Timeline from "../components/Timeline";
-import BirthdayCake from "../components/BirthdayCake";
-import FinalScene from "../components/FinalScene";
-import MusicToggle from "../components/MusicToggle";
+
+// --- Import all your beautiful components ---
+import LoadingScreen from "@/components/LoadingScreen";
+import MusicToggle from "@/components/MusicToggle";
+import CanvasParticles from "@/components/CanvasParticles";
+import SmoothScroll from "@/components/SmoothScroll";
+import Hero from "@/components/Hero";
+import LoveLetter from "@/components/LoveLetter";
+import NameReveal from "@/components/NameReveal";
+import MemoriesGallery from "@/components/MemoriesGallery";
+import Timeline from "@/components/Timeline";
+import FinalScene from "@/components/FinalScene";
 
 export default function Home() {
+  // This state controls the Loading Screen overlay
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <main className="relative bg-[#030303] min-h-screen selection:bg-accent selection:text-white">
-      {!isLoading && <MusicToggle />}
+    <main className="bg-[#030303] min-h-screen text-white overflow-hidden relative">
+      
+      {/* 1. The Loading Screen Overlay */}
+      {/* It will automatically call setIsLoading(false) when it reaches 100% */}
+      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
 
-      <AnimatePresence mode="wait">
-        {isLoading ? (
-          <LoadingScreen key="loader" onComplete={() => setIsLoading(false)} />
-        ) : (
-          <div key="content" className="relative z-20">
-            {/* The Rocket Launch happens right here inside Hero */}
+      {/* 2. The Main Experience (Only shows after loading is done) */}
+      {!isLoading && (
+        <>
+          {/* Global UI Elements (These stay on screen the whole time) */}
+          <MusicToggle />
+          <CanvasParticles />
+          
+          {/* Smooth Scrolling Wrapper for the page content */}
+          <SmoothScroll>
+            
+            {/* --- THE CINEMATIC JOURNEY --- */}
+            
+            {/* Act 1: The Rocket Launch & Happy Birthday */}
             <Hero />
             
-            <NameReveal />
+            {/* Act 2: Unpacking the Gift & The Letter */}
             <LoveLetter />
+            
+            {/* Act 3: "Wishes For You" Text Reveal */}
+            <NameReveal />
+            
+            {/* Act 4: The Polaroid Camera Memories */}
             <MemoriesGallery />
+            
+            {/* Act 5: The Luxury Cake & The Wish (Your updated file!) */}
             <Timeline />
-            <BirthdayCake />
+            
+            {/* Act 6: The Final Goodbye & Aurora */}
             <FinalScene />
-          </div>
-        )}
-      </AnimatePresence>
+
+          </SmoothScroll>
+        </>
+      )}
+      
     </main>
   );
 }

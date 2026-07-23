@@ -7,33 +7,41 @@ import confetti from "canvas-confetti";
 
 export default function Hero() {
   const [stage, setStage] = useState<"idle" | "launching" | "fireworks">("idle");
-  const fireworkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const fireworkIntervalRef = useRef<number | null>(null);
 
-  // Massive firework show using canvas-confetti
+  // Lightweight firework show using canvas-confetti
   const startFireworkShow = () => {
-    const duration = 10 * 1000; // 10 seconds of fireworks
+    if (fireworkIntervalRef.current) {
+      window.clearInterval(fireworkIntervalRef.current);
+      fireworkIntervalRef.current = null;
+    }
+
+    const duration = 3_500;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const defaults = { startVelocity: 22, spread: 360, ticks: 45, zIndex: 0, disableForReducedMotion: true };
 
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
-    fireworkIntervalRef.current = setInterval(() => {
+    fireworkIntervalRef.current = window.setInterval(() => {
       const timeLeft = animationEnd - Date.now();
 
       if (timeLeft <= 0) {
-        if (fireworkIntervalRef.current) clearInterval(fireworkIntervalRef.current);
+        if (fireworkIntervalRef.current) {
+          window.clearInterval(fireworkIntervalRef.current);
+          fireworkIntervalRef.current = null;
+        }
         return;
       }
 
-      const particleCount = 50 * (timeLeft / duration);
+      const particleCount = Math.max(10, Math.round(18 * (timeLeft / duration)));
 
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 },
+        origin: { x: randomInRange(0.1, 0.9), y: randomInRange(0.1, 0.35) },
         colors: ["#ff2a85", "#ff73b3", "#ffffff", "#f5efe2", "#ba1c5c"],
       });
-    }, 250);
+    }, 400);
   };
 
   const handleLaunch = () => {
@@ -48,7 +56,10 @@ export default function Hero() {
 
   useEffect(() => {
     return () => {
-      if (fireworkIntervalRef.current) clearInterval(fireworkIntervalRef.current);
+      if (fireworkIntervalRef.current) {
+        window.clearInterval(fireworkIntervalRef.current);
+        fireworkIntervalRef.current = null;
+      }
     };
   }, []);
 
