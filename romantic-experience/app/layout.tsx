@@ -10,8 +10,8 @@ export const viewport: Viewport = {
 
 // 2. Clean metadata export without viewport
 export const metadata: Metadata = {
-  title: "Happy Birthday Aarya ❤️ | A Special Celebration",
-  description: "A personalized interactive birthday experience created especially for Aarya.",
+  title: "Happy Birthday Aarya 🎉",
+  description: "A personalized interactive birthday experience created for Aarya.",
 };
 
 export default function RootLayout({
