@@ -1,61 +1,44 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 
-// --- Import components ---
+// Critical top-of-page components (Loaded synchronously)
 import LoadingScreen from "@/components/LoadingScreen";
 import CanvasParticles from "@/components/CanvasParticles";
 import SmoothScroll from "@/components/SmoothScroll";
 import Hero from "@/components/Hero";
-import LoveLetter from "@/components/LoveLetter";
-import NameReveal from "@/components/NameReveal";
-import MemoriesGallery from "@/components/MemoriesGallery";
-import Timeline from "@/components/Timeline";
-import FinalScene from "@/components/FinalScene";
+
+// Non-critical below-the-fold components (Dynamically imported to cut bundle size)
+const LoveLetter = dynamic(() => import("@/components/LoveLetter"), { ssr: false });
+const NameReveal = dynamic(() => import("@/components/NameReveal"), { ssr: false });
+const MemoriesGallery = dynamic(() => import("@/components/MemoriesGallery"), { ssr: false });
+const Timeline = dynamic(() => import("@/components/Timeline"), { ssr: false });
+const FinalScene = dynamic(() => import("@/components/FinalScene"), { ssr: false });
 
 export default function Home() {
-  // Controls the Loading Screen overlay state[cite: 19]
   const [isLoading, setIsLoading] = useState(true);
 
   return (
     <main className="bg-[#030303] min-h-screen text-white overflow-hidden relative">
-      
-      {/* 1. The Loading Screen Overlay */}
+      {/* 1. Loading Screen */}
       {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
 
-      {/* 2. The Main Experience (Shows once loaded) */}
+      {/* 2. Main Experience */}
       {!isLoading && (
         <>
-          {/* Global Ambient Background Particles */}
           <CanvasParticles />
-          
-          {/* Smooth Scrolling Wrapper */}
+
           <SmoothScroll>
-            
-            {/* --- THE CINEMATIC JOURNEY --- */}
-            
-            {/* Act 1: The Rocket Launch, Integrated Music Keepsake Player, & Fireworks */}
             <Hero />
-            
-            {/* Act 2: Unpacking the Gift & The Luxury Invitation Letter */}
             <LoveLetter />
-
-            {/* Act 3: "Wishes For You" Text Reveal */}
             <NameReveal />
-            
-            {/* Act 4: The Polaroid Camera Memories */}
             <MemoriesGallery />
-            
-            {/* Act 5: The Luxury Cake & Wish Ceremony */}
             <Timeline />
-            
-            {/* Act 6: The Final Goodbye & Aurora */}
             <FinalScene />
-
           </SmoothScroll>
         </>
       )}
-      
     </main>
   );
 }

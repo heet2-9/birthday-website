@@ -7,52 +7,50 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Smoother, low-CPU interval updates to avoid blocking the main thread
     const timer = setInterval(() => {
-      setProgress((oldProgress) => {
-        if (oldProgress === 100) {
+      setProgress((prev) => {
+        if (prev >= 100) {
           clearInterval(timer);
-          setTimeout(onComplete, 600);
+          setTimeout(onComplete, 300);
           return 100;
         }
-        const diff = Math.random() * 12;
-        return Math.min(oldProgress + diff, 100);
+        return prev + 2;
       });
-    }, 120);
+    }, 25);
 
     return () => clearInterval(timer);
   }, [onComplete]);
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-[#030303] z-[9999] flex flex-col items-center justify-center p-4"
-      exit={{ opacity: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }}
-    >
-      <div className="w-full max-w-xs space-y-6 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="font-serif text-3xl tracking-widest text-white uppercase text-glow"
-        >
-          Loading memories...
-        </motion.h1>
-        
-        <div className="relative h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
-          <motion.div
-            className="absolute top-0 left-0 h-full bg-accent box-glow"
-            style={{ width: `${progress}%` }}
-            transition={{ ease: "easeInOut" }}
-          />
+    <AnimatePresence>
+      <motion.div
+        exit={{ opacity: 0, filter: "blur(10px)" }}
+        transition={{ duration: 0.6, ease: "easeInOut" }}
+        className="fixed inset-0 z-[9999] bg-[#030303] flex flex-col items-center justify-center p-4 select-none"
+      >
+        <div className="w-full max-w-xs space-y-4 text-center">
+          <motion.h1 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-serif text-2xl text-white tracking-wide"
+          >
+            Loading <span className="italic text-[#ff2a85]">Memories...</span>
+          </motion.h1>
+
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden relative">
+            <motion.div
+              className="h-full bg-gradient-to-r from-[#ff2a85] to-amber-300 rounded-full"
+              style={{ width: `${progress}%` }}
+              transition={{ ease: "linear" }}
+            />
+          </div>
+
+          <p className="font-mono text-xs text-neutral-400 tracking-widest">
+            {progress}%
+          </p>
         </div>
-        
-        <motion.p
-          className="text-xs font-mono tracking-wider text-neutral-500 uppercase"
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-         Wrapping your birthday surprise... {Math.floor(progress)}%
-        </motion.p>
-      </div>
-    </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

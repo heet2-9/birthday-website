@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Heart } from "lucide-react";
 
-// --- DATA ---
 const MEMORIES = [
   { 
     id: 1, 
@@ -34,14 +33,13 @@ type Stage = "intro" | "developing" | "viewing" | "collage";
 export default function MemoriesGallery() {
   const [stage, setStage] = useState<Stage>("intro");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [developedMemories, setDevelopedMemories] = useState<number[]>([]);
+  const [, setDevelopedMemories] = useState<number[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<typeof MEMORIES[0] | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isFlashing, setIsFlashing] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // --- MOUSE PARALLAX FOR CAMERA ---
   const handleMouseMove = (e: React.MouseEvent) => {
     if (stage === "collage" || !containerRef.current) return;
     const { left, top, width, height } = containerRef.current.getBoundingClientRect();
@@ -50,28 +48,24 @@ export default function MemoriesGallery() {
     setMousePos({ x, y });
   };
 
-  // --- SHUTTER INTERACTION ---
   const handleShutter = () => {
     if (stage !== "intro" && stage !== "viewing") return;
     
-    // 1. Trigger Flash & Camera pushback
     setIsFlashing(true);
     setStage("developing");
     
     setTimeout(() => {
       setIsFlashing(false);
-      // 2. Photo starts sliding out and developing
       setTimeout(() => {
         setDevelopedMemories((prev) => [...prev, MEMORIES[currentIndex].id]);
         
-        // 3. Finish developing, ready to view
         setTimeout(() => {
           if (currentIndex === MEMORIES.length - 1) {
             setStage("collage");
           } else {
             setStage("viewing");
           }
-        }, 2500); // 2.5s chemical develop time
+        }, 2500);
       }, 800); 
     }, 150);
   };
@@ -87,10 +81,8 @@ export default function MemoriesGallery() {
       onMouseMove={handleMouseMove}
       className="min-h-screen w-full relative flex flex-col items-center justify-center bg-[#030303] overflow-hidden py-16 md:py-24"
     >
-      {/* Ambient Lighting */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#ff2a85]/5 rounded-full blur-[150px] pointer-events-none" />
 
-      {/* --- FLASHBANG EFFECT --- */}
       <AnimatePresence>
         {isFlashing && (
           <motion.div
@@ -102,7 +94,6 @@ export default function MemoriesGallery() {
         )}
       </AnimatePresence>
 
-      {/* --- CAMERA & SINGLE PHOTO STAGE --- */}
       <AnimatePresence mode="wait">
         {stage !== "collage" && (
           <motion.div 
@@ -113,8 +104,6 @@ export default function MemoriesGallery() {
             transition={{ duration: 1 }}
             className="relative flex flex-col items-center justify-center w-full max-w-4xl min-h-[75vh] md:min-h-[85vh] z-10 px-4 perspective-[1000px]"
           >
-            
-            {/* TEXT: Intro */}
             <div className="h-20 flex flex-col items-center justify-center mb-4 md:mb-8 text-center">
               <AnimatePresence mode="wait">
                 {stage === "intro" && (
@@ -125,9 +114,9 @@ export default function MemoriesGallery() {
                     exit={{ opacity: 0, y: -20 }}
                     className="space-y-2 md:space-y-3"
                   >
-                    <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl text-white tracking-tight">
+                    <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-white tracking-tight">
                       Every memory deserves its own <span className="italic text-[#ff2a85] drop-shadow-[0_0_15px_rgba(255,42,133,0.5)]">moment</span>.
-                    </h3>
+                    </h2>
                     <p className="font-mono text-[10px] sm:text-xs text-neutral-400 uppercase tracking-widest">
                       Click the red shutter to develop a memory
                     </p>
@@ -136,7 +125,6 @@ export default function MemoriesGallery() {
               </AnimatePresence>
             </div>
 
-            {/* THE CAMERA CONTAINER */}
             <div className="relative flex flex-col items-center justify-center w-full my-auto pb-16 sm:pb-24 md:pb-32">
               <motion.div
                 animate={{ 
@@ -149,13 +137,9 @@ export default function MemoriesGallery() {
                 className="relative z-20"
                 style={{ transformStyle: "preserve-3d" }}
               >
-                {/* Camera Body */}
                 <div className="w-[260px] h-[180px] sm:w-[300px] sm:h-[210px] md:w-[340px] md:h-[240px] bg-gradient-to-b from-[#f4efe6] to-[#d5cec4] rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8),inset_0_2px_10px_rgba(255,255,255,0.8)] relative border border-[#fff]/20 overflow-hidden flex flex-col items-center">
-                  
-                  {/* Rainbow Stripe Detail */}
                   <div className="absolute top-0 bottom-0 left-10 sm:left-12 w-3 bg-gradient-to-b from-red-400 via-yellow-400 to-blue-400 opacity-80" />
                   
-                  {/* Flash Bulb */}
                   <div className="absolute top-5 sm:top-6 right-5 sm:right-6 w-10 sm:w-12 h-7 sm:h-8 rounded-md bg-gradient-to-br from-white/40 to-white/5 border border-white/40 backdrop-blur-md shadow-[inset_0_0_10px_rgba(255,255,255,0.5)] overflow-hidden">
                     <motion.div 
                       animate={{ opacity: isFlashing ? [0, 1, 0] : 0 }} 
@@ -164,27 +148,23 @@ export default function MemoriesGallery() {
                     />
                   </div>
 
-                  {/* Shutter Button */}
                   <button 
                     onClick={handleShutter}
                     disabled={stage !== "intro"}
+                    aria-label="Trigger Camera Shutter to Develop Memory"
                     className="absolute -top-3 right-8 w-10 h-6 bg-gradient-to-b from-[#ff2a85] to-[#ba1c5c] rounded-t-lg shadow-[0_-2px_10px_rgba(255,42,133,0.4)] border-t border-white/40 cursor-pointer active:translate-y-2 transition-transform hover:brightness-110 disabled:cursor-not-allowed"
                   />
 
-                  {/* Main Lens */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-gradient-to-br from-[#111] to-[#000] rounded-full border-[5px] sm:border-[6px] border-[#222] shadow-[0_10px_30px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(0,0,0,1)] flex items-center justify-center">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full border border-[#333] flex items-center justify-center bg-gradient-to-tr from-[#0a0a0a] via-[#1a1a1a] to-[#2a2a2a]">
-                      {/* Glass Reflection */}
                       <div className="absolute top-2 left-4 w-10 sm:w-12 h-5 sm:h-6 bg-white/10 rounded-full blur-[2px] rotate-45" />
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#050505] shadow-[inset_0_0_15px_rgba(0,0,0,1)]" />
                     </div>
                   </div>
 
-                  {/* Eject Slot */}
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-40 sm:w-48 h-2 bg-gradient-to-b from-black to-[#222] rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,1)]" />
                 </div>
 
-                {/* --- THE DEVELOPING POLAROID --- */}
                 <AnimatePresence>
                   {(stage === "developing" || stage === "viewing") && (
                     <motion.div
@@ -204,7 +184,6 @@ export default function MemoriesGallery() {
               </motion.div>
             </div>
 
-            {/* ACTION BUTTON */}
             <div className="h-16 flex items-center justify-center mt-20 sm:mt-24 md:mt-28 z-30">
               <AnimatePresence>
                 {stage === "viewing" && (
@@ -216,6 +195,7 @@ export default function MemoriesGallery() {
                   >
                     <button
                       onClick={handleNext}
+                      aria-label="Develop Next Memory"
                       className="px-6 py-2.5 sm:px-8 sm:py-3 rounded-full bg-white/5 border border-white/10 text-white font-mono text-xs uppercase tracking-widest hover:bg-[#ff2a85]/20 hover:border-[#ff2a85]/50 hover:text-[#ff2a85] transition-all duration-300 backdrop-blur-md shadow-lg"
                     >
                       Develop Next Memory
@@ -229,7 +209,6 @@ export default function MemoriesGallery() {
         )}
       </AnimatePresence>
 
-      {/* --- COLLAGE SCRAPBOOK STAGE --- */}
       <AnimatePresence>
         {stage === "collage" && (
           <motion.div 
@@ -261,17 +240,16 @@ export default function MemoriesGallery() {
               })}
             </div>
 
-            {/* Finale Message */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.5, delay: MEMORIES.length * 0.3 + 1 }}
               className="text-center space-y-6"
             >
-              <h4 className="font-serif text-3xl md:text-5xl text-neutral-300 tracking-tight leading-relaxed">
+              <h3 className="font-serif text-3xl md:text-5xl text-neutral-300 tracking-tight leading-relaxed">
                 Some memories fade... <br/>
                 <span className="italic text-white">The best ones stay forever.</span>
-              </h4>
+              </h3>
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
@@ -284,7 +262,6 @@ export default function MemoriesGallery() {
         )}
       </AnimatePresence>
 
-      {/* --- LIGHTBOX (Zoomed Photo) --- */}
       <AnimatePresence>
         {selectedPhoto && (
           <motion.div
@@ -294,7 +271,10 @@ export default function MemoriesGallery() {
             className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
             onClick={() => setSelectedPhoto(null)}
           >
-            <button className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors">
+            <button 
+              aria-label="Close photo preview"
+              className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"
+            >
               <X className="w-8 h-8" />
             </button>
             <motion.img
@@ -315,7 +295,6 @@ export default function MemoriesGallery() {
   );
 }
 
-// --- POLAROID SUB-COMPONENT ---
 function PolaroidCard({ 
   memory, 
   isDeveloping,
@@ -330,11 +309,7 @@ function PolaroidCard({
       whileHover={!isDeveloping ? { scale: 1.05, rotate: 0, y: -10, zIndex: 50 } : {}}
       onClick={!isDeveloping ? onClick : undefined}
       className={`relative w-[230px] sm:w-[260px] md:w-[280px] p-3 sm:p-4 bg-[#faf6ee] shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-[#eaddca]/40 group ${!isDeveloping ? "cursor-pointer" : ""}`}
-      style={{
-        backgroundImage: "url('https://www.transparenttextures.com/patterns/paper-fibers.png')", // Subtle paper texture
-      }}
     >
-      {/* Photo Container with bottom margin to reserve clean space for text */}
       <div className="w-full aspect-square bg-[#111] relative overflow-hidden shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] mb-12 sm:mb-14">
         <motion.img
           src={memory.src}
@@ -350,11 +325,10 @@ function PolaroidCard({
         />
       </div>
 
-      {/* Bottom Text Area (Anchored in the bottom white border) */}
       <div className="absolute bottom-2 sm:bottom-3 left-3 sm:left-4 right-3 sm:right-4 flex flex-col items-center text-center">
-        <h4 className="font-serif text-base sm:text-lg font-bold text-stone-800 opacity-90 tracking-tight leading-snug">
+        <h3 className="font-serif text-base sm:text-lg font-bold text-stone-800 opacity-90 tracking-tight leading-snug">
           {memory.title}
-        </h4>
+        </h3>
         <p className="font-serif italic text-[10px] sm:text-xs text-stone-500 mt-0.5 line-clamp-1">
           {memory.caption}
         </p>

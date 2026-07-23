@@ -6,10 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Rocket, ArrowDown, Sparkles, Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
 import confetti from "canvas-confetti";
 
-// --- CUSTOMIZABLE ALBUM / KEEPSAKE PHOTO PATH ---
 const PLAYER_BG_IMAGE = "/images/music-player-bg.jpeg";
 
-// --- PRE-CALCULATED RANDOM DATA FOR HERO EFFECTS ---
 const STARS = Array.from({ length: 25 }).map((_, i) => ({
   id: i,
   left: `${Math.random() * 100}%`,
@@ -45,14 +43,12 @@ const BALLOONS = Array.from({ length: 8 }).map((_, i) => ({
   scale: 0.7 + Math.random() * 0.6,
 }));
 
-// Pre-calculated bar heights for the bottom decorative audio waveform visualizer (compact fit)
 const VISUALIZER_BARS = [8, 15, 10, 18, 9, 21, 13, 24, 12, 17, 10, 20, 15, 10, 17, 8];
 
 export default function Hero() {
   const [stage, setStage] = useState<"idle" | "launching" | "fireworks">("idle");
   const fireworkIntervalRef = useRef<number | null>(null);
 
-  // --- MUSIC PLAYER STATE & LOGIC ---
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -95,7 +91,7 @@ export default function Hero() {
     if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
 
     if (!isPlaying) {
-      audioRef.current.play().catch((err) => console.log("Audio playback:", err));
+      audioRef.current.play().catch(() => {});
       setIsPlaying(true);
 
       let vol = 0;
@@ -159,7 +155,6 @@ export default function Hero() {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  // --- FIREWORKS LOGIC ---
   const startFireworkShow = () => {
     if (fireworkIntervalRef.current) {
       window.clearInterval(fireworkIntervalRef.current);
@@ -222,10 +217,8 @@ export default function Hero() {
 
   return (
     <section className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden px-4 py-4">
-      {/* Ambient background glow */}
       <div className="absolute w-[450px] h-[450px] rounded-full bg-accent/5 blur-[120px] pointer-events-none z-0" />
 
-      {/* STAGE 3 BACKGROUND ENHANCEMENTS */}
       <AnimatePresence>
         {stage === "fireworks" && (
           <motion.div
@@ -247,8 +240,6 @@ export default function Hero() {
 
       <div className="relative flex flex-col items-center justify-center w-full z-20 my-auto">
         <AnimatePresence mode="wait">
-          
-          {/* --- STAGE 1 & 2: LAUNCHER & NARROWER, SHORTER KEEPSAKE MUSIC PLAQUE DISPLAY --- */}
           {(stage === "idle" || stage === "launching") && (
             <motion.div
               key="launcher"
@@ -266,8 +257,8 @@ export default function Hero() {
                 </p>
               </div>
 
-              {/* Rocket Launcher Icon */}
-              <motion.div
+              <motion.button
+                aria-label="Launch Rocket Celebration"
                 animate={
                   stage === "launching"
                     ? { y: -1000, scale: 0.5, opacity: 0, transition: { duration: 1.5, ease: "easeIn" } }
@@ -292,16 +283,14 @@ export default function Hero() {
                     className="absolute -bottom-8 w-5 h-14 bg-gradient-to-b from-orange-500 via-yellow-400 to-transparent blur-md rounded-full"
                   />
                 )}
-              </motion.div>
+              </motion.button>
 
-              {/* --- KEEPSAKE MUSIC PLAQUE DISPLAY (18% NARROWER, 12% SHORTER) --- */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className="w-full flex justify-center items-center relative select-none mt-0.5"
               >
-                {/* Dynamic Ambient Aura Behind Plaque */}
                 <motion.div
                   animate={{
                     scale: isPlaying ? [1, 1.12, 1] : 1,
@@ -311,44 +300,38 @@ export default function Hero() {
                   className="absolute w-[200px] h-[240px] rounded-2xl bg-gradient-to-tr from-[#ff2a85] via-amber-400/20 to-transparent blur-[60px] pointer-events-none z-0"
                 />
 
-                {/* Main Acrylic Frosted Plaque Card (18% Narrower, Tighter Heights & Paddings) */}
                 <motion.div
                   animate={{ y: [-2, 2, -2] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   whileHover={{ scale: 1.02, y: -3 }}
                   className="relative w-[185px] sm:w-[200px] rounded-2xl bg-[#0d0d0d]/85 backdrop-blur-2xl border border-white/20 p-2.5 sm:p-3 shadow-[0_18px_50px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.3)] z-20 overflow-hidden flex flex-col items-center gap-2 transition-all duration-300 hover:border-[#ff2a85]/40 hover:shadow-[0_0_24px_rgba(255,42,133,0.25)]"
                 >
-                  {/* Subtle Champagne Gold Inner Rim */}
                   <div className="absolute inset-1 rounded-[13px] border border-[#FFD700]/30 pointer-events-none z-10" />
 
-                  {/* Glass Glare Sweep Across Card */}
                   <motion.div
                     animate={{ x: ["-100%", "250%"] }}
                     transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                     className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent skew-x-12 pointer-events-none z-30"
                   />
 
-                  {/* --- 1. LARGE TOP ALBUM / PHOTO BOX (NARROWER & PROPORTIONALLY SHORTER) --- */}
                   <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-[0_6px_16px_rgba(0,0,0,0.8)] border border-white/20 z-20 bg-black/40">
                     <Image
                       src={PLAYER_BG_IMAGE}
-                      alt="Keep Sake Album Photo"
+                      alt="Aarya's Keepsake Photo"
                       fill
                       sizes="200px"
                       className="object-cover"
                       priority
                     />
-                    {/* Glass sheen on image top */}
                     <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/30 pointer-events-none" />
                   </div>
 
-                  {/* --- 2. SONG TITLE & SUBTITLE --- */}
                   <div className="text-center space-y-0.5 w-full z-20 px-0.5">
                     <div className="flex items-center justify-center gap-1">
                       <Sparkles className="w-2 h-2 text-[#ff2a85]" />
-                      <h3 className="font-serif text-xs sm:text-sm text-white tracking-tight font-semibold">
+                      <h2 className="font-serif text-xs sm:text-sm text-white tracking-tight font-semibold">
                         For Aarya <span className="text-[#ff2a85]">❤️</span>
-                      </h3>
+                      </h2>
                       <Sparkles className="w-2 h-2 text-[#ff2a85]" />
                     </div>
                     <p className="font-mono text-[7px] sm:text-[7.5px] text-amber-200/80 uppercase tracking-[0.16em]">
@@ -356,7 +339,6 @@ export default function Hero() {
                     </p>
                   </div>
 
-                  {/* --- 3. PROGRESS BAR & TIMESTAMPS --- */}
                   <div className="w-full space-y-0.5 z-20 px-0.5">
                     <div className="relative w-full flex items-center">
                       <input
@@ -365,6 +347,7 @@ export default function Hero() {
                         max={duration || 100}
                         value={currentTime}
                         onChange={handleSeek}
+                        aria-label="Audio Seek Time"
                         className="w-full h-0.5 bg-white/15 rounded-lg appearance-none cursor-pointer accent-[#ff2a85] focus:outline-none shadow-sm"
                       />
                     </div>
@@ -374,10 +357,7 @@ export default function Hero() {
                     </div>
                   </div>
 
-                  {/* --- 4. PLAYBACK CONTROLS --- */}
                   <div className="flex items-center justify-between w-full z-20 px-1 pt-0.5">
-                    
-                    {/* Volume Button + Hover Slider */}
                     <div 
                       className="relative flex items-center"
                       onMouseEnter={() => setShowVolumeSlider(true)}
@@ -385,6 +365,7 @@ export default function Hero() {
                     >
                       <button
                         onClick={toggleMute}
+                        aria-label={isMuted ? "Unmute Audio" : "Mute Audio"}
                         className="p-0.5 text-neutral-300 hover:text-[#ff2a85] transition-colors duration-200"
                       >
                         {isMuted || volume === 0 ? (
@@ -409,6 +390,7 @@ export default function Hero() {
                               step={0.01}
                               value={isMuted ? 0 : volume}
                               onChange={handleVolumeChange}
+                              aria-label="Volume Slider"
                               className="w-10 h-0.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-[#ff2a85]"
                             />
                           </motion.div>
@@ -416,21 +398,21 @@ export default function Hero() {
                       </AnimatePresence>
                     </div>
 
-                    {/* Media Control Buttons */}
                     <div className="flex items-center gap-1.5">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
+                        aria-label="Previous Track"
                         className="p-0.5 text-neutral-300 hover:text-white transition-colors"
                       >
                         <SkipBack className="w-3 h-3" />
                       </motion.button>
 
-                      {/* Main Play / Pause Button */}
                       <motion.button
                         whileHover={{ scale: 1.08 }}
                         whileTap={{ scale: 0.92 }}
                         onClick={togglePlay}
+                        aria-label={isPlaying ? "Pause Music" : "Play Music"}
                         className="w-7 h-7 rounded-full bg-gradient-to-br from-white via-amber-100 to-[#ff2a85] text-black flex items-center justify-center shadow-[0_0_12px_rgba(255,42,133,0.5)] hover:shadow-[0_0_20px_rgba(255,42,133,0.8)] transition-all duration-300"
                       >
                         {isPlaying ? (
@@ -443,17 +425,16 @@ export default function Hero() {
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
+                        aria-label="Next Track"
                         className="p-0.5 text-neutral-300 hover:text-white transition-colors"
                       >
                         <SkipForward className="w-3 h-3" />
                       </motion.button>
                     </div>
 
-                    {/* Right spacer for alignment */}
                     <div className="w-4" />
                   </div>
 
-                  {/* --- 5. CUSTOM DECORATIVE AUDIO SOUNDWAVE VISUALIZER --- */}
                   <div className="w-full flex items-center justify-center gap-0.5 pt-0.5 pb-0.5 z-20">
                     {VISUALIZER_BARS.map((height, idx) => (
                       <motion.div
@@ -482,7 +463,6 @@ export default function Hero() {
             </motion.div>
           )}
 
-          {/* --- STAGE 3: THE FIREWORK TEXT REVEAL & CELEBRATION --- */}
           {stage === "fireworks" && (
             <motion.div
               key="fireworks-text"
@@ -495,7 +475,6 @@ export default function Hero() {
                 className="fixed inset-0 bg-white z-50 pointer-events-none mix-blend-overlay"
               />
 
-              {/* Magical Dust */}
               {DUST.map((p) => (
                 <motion.div
                   key={`dust-${p.id}`}
@@ -507,7 +486,6 @@ export default function Hero() {
                 />
               ))}
 
-              {/* Twinkling Stars */}
               {STARS.map((s) => (
                 <motion.div
                   key={`star-${s.id}`}
@@ -519,7 +497,6 @@ export default function Hero() {
                 />
               ))}
 
-              {/* Floating Balloons */}
               {BALLOONS.map((b) => (
                 <motion.div
                   key={`balloon-${b.id}`}
@@ -543,7 +520,6 @@ export default function Hero() {
                 </motion.div>
               ))}
 
-              {/* Celebration Emojis */}
               {FLOATING_EMOJIS.map((e) => (
                 <motion.div
                   key={`emoji-${e.id}`}
@@ -557,7 +533,6 @@ export default function Hero() {
                 </motion.div>
               ))}
 
-              {/* Gift Boxes */}
               <motion.div 
                 initial={{ opacity: 0, x: -100, scale: 0.5, rotate: -20 }}
                 animate={{ opacity: [0, 1, 1, 0], x: 0, scale: 1, rotate: 0 }}
@@ -575,7 +550,6 @@ export default function Hero() {
                 🎁
               </motion.div>
 
-              {/* Birthday Text Reveal */}
               <div className="relative z-40 flex flex-col items-center">
                 <motion.div
                   animate={{ rotate: 360 }}
@@ -628,7 +602,6 @@ export default function Hero() {
         </AnimatePresence>
       </div>
 
-      {/* Scroll Down Indicator */}
       <AnimatePresence>
         {stage === "fireworks" && (
           <motion.div
