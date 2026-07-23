@@ -13,12 +13,13 @@ const INTRO_LINES = [
   "This story is only about you."
 ];
 
+type Stage = "intro" | "outerBox" | "innerBox" | "envelope" | "opening" | "sliding" | "unfolding" | "letterOpen";
+
 export default function LoveLetter() {
-  const [stage, setStage] = useState<"intro" | "outerBox" | "innerBox" | "cardOpen">("intro");
+  const [stage, setStage] = useState<Stage>("intro");
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   
-  // 1. Tracks when this component actually enters the screen
   const containerRef = useRef<HTMLElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.4 });
   
@@ -26,15 +27,13 @@ export default function LoveLetter() {
   const smoothEase = { ease: [0.25, 1, 0.5, 1], duration: 1.2 };
   const springTransition = { type: "spring", stiffness: 50, damping: 14 };
 
-  // Setup typing audio (plays softly if the file exists)
   useEffect(() => {
     audioRef.current = new Audio("/typewriter.mp3");
     audioRef.current.volume = 0.15;
   }, []);
 
-  // 2. Bulletproof Typewriter Logic (Waits for scroll!)
+  // Typewriter logic
   useEffect(() => {
-    // If we aren't in the intro stage OR the user hasn't scrolled to it yet, pause!
     if (stage !== "intro" || !isInView) return;
 
     const currentLine = INTRO_LINES[currentLineIndex];
@@ -70,18 +69,49 @@ export default function LoveLetter() {
       particleCount: 80,
       spread: 60,
       origin: { y: 0.6 },
-      colors: ["#ff2a85", "#ff73b3", "#ffffff", "#eaddca"],
+      colors: ["#ff2a85", "#ff73b3", "#ffffff", "#f5efe2"],
     });
   };
 
+  const handleEnvelopeClick = () => {
+    if (stage !== "envelope") return;
+    
+    // Sparkle burst from both sides
+    confetti({
+      particleCount: 40,
+      spread: 50,
+      origin: { y: 0.55 },
+      colors: ["#FFD700", "#ff2a85", "#ffffff"],
+      startVelocity: 18,
+      disableForReducedMotion: true
+    });
+
+    setStage("opening");
+    setTimeout(() => {
+      setStage("sliding");
+      setTimeout(() => {
+        setStage("unfolding");
+        setTimeout(() => {
+          setStage("letterOpen");
+        }, 800);
+      }, 800);
+    }, 700);
+  };
+
   return (
-    // Attach the observer ref to the main wrapper
     <section 
       ref={containerRef} 
       className="min-h-screen w-full flex flex-col justify-center items-center px-4 relative bg-[#030303] py-20 overflow-hidden"
     >
-      {/* Background ambient glow */}
-      <div className="absolute w-[500px] h-[500px] rounded-full bg-accent/5 blur-[140px] pointer-events-none z-0" />
+      {/* Ambient background glow */}
+      <motion.div 
+        animate={{
+          scale: stage === "letterOpen" ? 1.2 : 1,
+          opacity: stage === "letterOpen" ? 0.2 : 0.1
+        }}
+        transition={{ duration: 1.5 }}
+        className="absolute w-[600px] h-[600px] rounded-full bg-[#ff2a85] blur-[160px] pointer-events-none z-0" 
+      />
 
       {/* Dynamic Sub-Header */}
       {stage !== "intro" && (
@@ -91,22 +121,24 @@ export default function LoveLetter() {
             animate={{ opacity: 1 }}
             className="font-serif text-3xl md:text-5xl text-white tracking-tight"
           >
-            {stage === "cardOpen" ? (
-              <>Today&apos;s <span className="italic text-accent text-glow">Reward</span></>
+            {stage === "letterOpen" ? (
+              <>Your <span className="italic text-[#ff2a85] text-glow">Invitation</span></>
             ) : (
-              <>A Little <span className="italic text-accent text-glow">Surprise</span></>
+              <>A Little <span className="italic text-[#ff2a85] text-glow">Surprise</span></>
             )}
           </motion.h3>
           <p className="font-mono text-xs text-neutral-400 uppercase tracking-widest">
             {stage === "outerBox" && "Click the gift box to unpack it ✨"}
             {stage === "innerBox" && "Look inside... there's one more layer ✦"}
-            {stage === "cardOpen" && "Your birthday card has arrived."}
+            {stage === "envelope" && "Tap the frosted card to reveal your message ✨"}
+            {(stage === "opening" || stage === "sliding" || stage === "unfolding") && "Unlocking your birthday invitation..."}
+            {stage === "letterOpen" && "Created especially for you"}
           </p>
         </div>
       )}
 
       {/* Main Presentation Stage */}
-      <div className="relative flex items-center justify-center w-full max-w-lg h-96 z-10 perspective-[1200px]">
+      <div className="relative flex items-center justify-center w-full max-w-lg min-h-[480px] z-10 perspective-[1400px]">
         <AnimatePresence mode="wait">
           
           {/* STAGE 1: CINEMATIC TYPEWRITER INTRO */}
@@ -124,13 +156,13 @@ export default function LoveLetter() {
                 <motion.span
                   animate={{ opacity: [1, 0, 1] }}
                   transition={{ repeat: Infinity, duration: 0.8 }}
-                  className="inline-block w-[3px] h-[28px] md:h-[38px] bg-accent ml-2 relative top-1"
+                  className="inline-block w-[3px] h-[28px] md:h-[38px] bg-[#ff2a85] ml-2 relative top-1"
                 />
               </p>
             </motion.div>
           )}
 
-          {/* STAGE 2: PREMIUM MASTER GIFT BOX */}
+          {/* STAGE 2: MASTER GIFT BOX */}
           {stage === "outerBox" && (
             <motion.div
               key="outer-box"
@@ -143,13 +175,13 @@ export default function LoveLetter() {
                 setStage("innerBox");
                 triggerConfetti();
               }}
-              className="glass-panel p-12 rounded-full cursor-pointer flex items-center justify-center text-accent box-glow bg-accent/5 border-accent/20 relative group"
+              className="glass-panel p-12 rounded-full cursor-pointer flex items-center justify-center text-[#ff2a85] box-glow bg-[#ff2a85]/5 border border-[#ff2a85]/20 relative group"
             >
               <Gift className="w-20 h-20 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105" />
             </motion.div>
           )}
 
-          {/* STAGE 3: MINI LUXURY NESTED GIFT */}
+          {/* STAGE 3: MINI NESTED GIFT */}
           {stage === "innerBox" && (
             <motion.div
               key="inner-box"
@@ -159,72 +191,160 @@ export default function LoveLetter() {
               transition={springTransition}
               whileHover={{ scale: 1.08 }}
               onClick={() => {
-                setStage("cardOpen");
+                setStage("envelope");
                 triggerConfetti();
               }}
-              className="p-8 rounded-full cursor-pointer flex items-center justify-center text-accent-light box-glow bg-white/[0.02] border border-white/10 relative group"
+              className="p-8 rounded-full cursor-pointer flex items-center justify-center text-pink-300 box-glow bg-white/[0.02] border border-white/10 relative group"
             >
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-accent to-accent-light opacity-20 blur-sm group-hover:opacity-40 transition-opacity duration-500" />
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#ff2a85] to-pink-300 opacity-20 blur-sm group-hover:opacity-40 transition-opacity duration-500" />
               <Sparkles className="w-12 h-12 animate-pulse" />
             </motion.div>
           )}
 
-          {/* STAGE 4: HIGH-END UNFOLDED BIRTHDAY CARD */}
-          {stage === "cardOpen" && (
+          {/* STAGE 4: MODERN FROSTED GLASS ENVELOPE & LUXURY INVITATION CARD */}
+          {stage !== "intro" && stage !== "outerBox" && stage !== "innerBox" && (
             <motion.div
-              key="birthday-card"
-              initial={{ y: 140, scale: 0.75, opacity: 0, rotateX: -25 }}
-              animate={{ y: 0, scale: 1, opacity: 1, rotateX: 0 }}
+              key="envelope-stage"
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={springTransition}
-              className="w-full max-w-[440px] bg-[#faf6ee] rounded-xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-[#eaddca]/60 p-6 md:p-10 text-stone-800 relative overflow-hidden"
-              style={{ transformStyle: "preserve-3d" }}
+              className="relative flex items-center justify-center w-full"
             >
-              <div className="absolute inset-3 border border-[#eaddca]/40 rounded-lg pointer-events-none" />
+              {/* Subtle Floating Sparkles */}
+              <div className="absolute inset-0 -m-12 pointer-events-none z-0">
+                {[...Array(6)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{
+                      y: [0, -15, 0],
+                      opacity: [0.3, 0.8, 0.3],
+                      scale: [0.8, 1.2, 0.8],
+                    }}
+                    transition={{
+                      duration: 3 + i,
+                      repeat: Infinity,
+                      delay: i * 0.5,
+                      ease: "easeInOut",
+                    }}
+                    className="absolute w-1.5 h-1.5 bg-[#FFD700] rounded-full shadow-[0_0_8px_#FFD700]"
+                    style={{
+                      left: `${20 + i * 12}%`,
+                      top: `${25 + (i % 3) * 25}%`,
+                    }}
+                  />
+                ))}
+              </div>
 
+              {/* MODERN FROSTED GLASS ENVELOPE */}
               <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={{ visible: { transition: { staggerChildren: 0.22 } } }}
-                className="font-serif text-sm md:text-base leading-relaxed space-y-5 text-stone-800 text-left max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar"
+                animate={{ y: [-2, 2, -2] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                whileHover={stage === "envelope" ? { scale: 1.02, y: -6 } : {}}
+                onClick={handleEnvelopeClick}
+                className={`relative w-[340px] sm:w-[420px] h-[250px] rounded-2xl bg-white/[0.06] backdrop-blur-2xl border border-white/20 shadow-[0_30px_80px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col justify-between overflow-visible transition-all duration-300 ${stage === "envelope" ? "cursor-pointer hover:border-[#ff2a85]/50 hover:shadow-[0_0_40px_rgba(255,42,133,0.3)]" : ""}`}
+                style={{ transformStyle: "preserve-3d" }}
               >
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }} className="text-xl font-medium text-stone-900">
-                  Dear Aarya,
-                </motion.p>
-                
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }} className="text-2xl font-bold text-accent-muted tracking-tight">
-                  Happy Birthday! 🎉
-                </motion.p>
+                {/* Glowing Border Accent */}
+                <div className="absolute inset-0 rounded-2xl border border-[#ff2a85]/20 pointer-events-none z-10" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff2a85]/10 rounded-full blur-2xl pointer-events-none" />
 
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}>
-                  I wanted to make something a little different this year, so instead of sending just another message, I made this small surprise especially for you.
-                </motion.p>
-
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}>
-                  Thank you for being such a wonderful friend. From all the random conversations to the funny moments and the memories we&apos;ve shared, they&apos;ve all made our friendship special.
-                </motion.p>
-
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}>
-                  I hope this birthday marks the beginning of another amazing year filled with happiness, success, good health, exciting adventures, and countless reasons to smile.
-                </motion.p>
-
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}>
-                  Keep being the kind, cheerful, and genuine person you are because that&apos;s what makes you truly special.
-                </motion.p>
-
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}>
-                  May every dream you&apos;re working towards come true, and may life always bring you people and moments that make you happy.
-                </motion.p>
-
-                <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}>
-                  Enjoy your day to the fullest, make lots of memories, and don&apos;t forget to smile a little extra today—it&apos;s your day after all.
-                </motion.p>
-
-                <motion.div 
-                  variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: smoothEase } }}
-                  className="pt-6 border-t border-stone-200 flex flex-col items-end"
+                {/* Minimal Top Flap */}
+                <motion.div
+                  initial={{ rotateX: 0 }}
+                  animate={{ rotateX: stage !== "envelope" ? -180 : 0 }}
+                  transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                  className="absolute top-0 left-0 right-0 h-[120px] bg-white/[0.08] backdrop-blur-3xl border-b border-white/20 rounded-t-2xl z-30 shadow-lg flex justify-center items-center"
+                  style={{
+                    clipPath: "polygon(0 0, 100% 0, 50% 100%)",
+                    transformOrigin: "top center",
+                    transformStyle: "preserve-3d"
+                  }}
                 >
-                  <p className="font-semibold text-stone-900">Happy Birthday once again! 🎂✨</p>
-                  <p className="italic font-medium text-accent-muted mt-1 font-sans tracking-wide">— Heet</p>
+                  {/* Subtle Metallic Emblem */}
+                  <AnimatePresence>
+                    {stage === "envelope" && (
+                      <motion.div
+                        exit={{ scale: 0, opacity: 0 }}
+                        className="absolute bottom-2 w-10 h-10 rounded-full bg-gradient-to-br from-[#ffffff] via-[#f5efe2] to-[#ff2a85]/30 border border-white/40 shadow-[0_0_20px_rgba(255,42,133,0.4)] flex items-center justify-center cursor-pointer z-40"
+                      >
+                        <Sparkles className="w-4 h-4 text-[#ff2a85]" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* LUXURY INVITATION CARD (Sliding & Unfolding) */}
+                <motion.div
+                  initial={{ y: 0, scale: 0.95, opacity: 0 }}
+                  animate={{
+                    y: stage === "envelope" || stage === "opening" ? 0 : stage === "sliding" ? -170 : -30,
+                    scale: stage === "unfolding" || stage === "letterOpen" ? 1 : 0.95,
+                    opacity: stage === "envelope" ? 0 : 1,
+                    zIndex: stage === "sliding" || stage === "unfolding" || stage === "letterOpen" ? 50 : 5
+                  }}
+                  transition={{ duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
+                  className="absolute left-3 right-3 top-3 bg-[#fdfbf7] rounded-xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-6 md:p-8 text-stone-800 text-left overflow-hidden max-h-[75vh]"
+                >
+                  {/* Modern Subtle Gold Divider Accent */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-[2px] bg-gradient-to-r from-transparent via-[#FFD700] to-transparent opacity-70" />
+
+                  {/* Letter Content */}
+                  <div className="max-h-[58vh] overflow-y-auto pr-2 custom-scrollbar font-serif text-sm md:text-base leading-relaxed space-y-4 text-stone-800">
+                    <motion.div
+                      initial="hidden"
+                      animate={stage === "letterOpen" ? "visible" : "hidden"}
+                      variants={{
+                        visible: { transition: { staggerChildren: 0.15 } }
+                      }}
+                      className="space-y-4"
+                    >
+                      <motion.p 
+                        variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                        className="text-xl font-medium text-stone-900 font-serif"
+                      >
+                        Dear Aarya,
+                      </motion.p>
+                      
+                      <motion.p 
+                        variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                        className="text-2xl font-bold text-[#ff2a85] tracking-tight font-serif"
+                      >
+                        Happy Birthday! 🎉
+                      </motion.p>
+
+                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+                        I wanted to make something a little different this year, so instead of sending just another message, I made this small surprise especially for you.
+                      </motion.p>
+
+                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+                        Thank you for being such a wonderful friend. From all the random conversations to the funny moments and the memories we&apos;ve shared, they&apos;ve all made our friendship special.
+                      </motion.p>
+
+                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+                        I hope this birthday marks the beginning of another amazing year filled with happiness, success, good health, exciting adventures, and countless reasons to smile.
+                      </motion.p>
+
+                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+                        Keep being the kind, cheerful, and genuine person you are because that&apos;s what makes you truly special.
+                      </motion.p>
+
+                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+                        May every dream you&apos;re working towards come true, and may life always bring you people and moments that make you happy.
+                      </motion.p>
+
+                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+                        Enjoy your day to the fullest, make lots of memories, and don&apos;t forget to smile a little extra today—it&apos;s your day after all.
+                      </motion.p>
+
+                      <motion.div 
+                        variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                        className="pt-4 border-t border-stone-200 flex flex-col items-end"
+                      >
+                        <p className="font-semibold text-stone-900">Happy Birthday once again! 🎂✨</p>
+                        <p className="italic font-medium text-[#ff2a85] mt-1 font-sans tracking-wide">— Heet</p>
+                      </motion.div>
+                    </motion.div>
+                  </div>
                 </motion.div>
               </motion.div>
             </motion.div>
