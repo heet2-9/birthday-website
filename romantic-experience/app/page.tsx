@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 
+
 // Critical top-of-page components (Loaded synchronously)
 import LoadingScreen from "@/components/LoadingScreen";
 import CanvasParticles from "@/components/CanvasParticles";
@@ -16,7 +17,9 @@ const MemoriesGallery = dynamic(() => import("@/components/MemoriesGallery"), { 
 const Timeline = dynamic(() => import("@/components/Timeline"), { ssr: false });
 const FinalScene = dynamic(() => import("@/components/FinalScene"), { ssr: false });
 
-export default function Home() {
+export default function Home() 
+
+{
   const [isLoading, setIsLoading] = useState(true);
 
   return (
