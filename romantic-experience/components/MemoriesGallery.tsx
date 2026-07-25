@@ -7,21 +7,21 @@ import { X, Heart } from "lucide-react";
 const MEMORIES = [
   { 
     id: 1, 
-    src: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=800", 
+    src: "images/aarya1.jpeg", 
     title: "Golden Sunset", 
     caption: "Chasing the horizon with you, wishing time would stand completely still.",
     date: "Dec 03"
   },
   { 
     id: 2, 
-    src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800", 
+    src: "images/aarya2.jpeg", 
     title: "Quiet Strolls", 
     caption: "Lost in soft conversations, finding our own quiet world together.",
     date: "Jan 21"
   },
   { 
     id: 3, 
-    src: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?auto=format&fit=crop&q=80&w=800", 
+    src: "images/aarya3.jpg", 
     title: "Winter Magic", 
     caption: "Cold hands, glowing smiles, and warmth that lasts long after sunset.",
     date: "Feb 18"
