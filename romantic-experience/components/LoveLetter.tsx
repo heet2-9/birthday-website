@@ -6,11 +6,11 @@ import { Gift, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 
 const INTRO_LINES = [
-  "Dear Aarya...",
-  "There are thousands of people...",
-  "Millions of memories...",
-  "But today...",
-  "This story is only about you."
+  "My dearest Aarya...",
+  "In a world of billions of souls...",
+  "Across countless quiet ordinary moments...",
+  "My heart found its true home in you.",
+  "This page is my love letter to your soul."
 ];
 
 type Stage = "intro" | "outerBox" | "innerBox" | "envelope" | "opening" | "sliding" | "unfolding" | "letterOpen";
@@ -122,17 +122,17 @@ export default function LoveLetter() {
             className="font-serif text-3xl md:text-5xl text-white tracking-tight"
           >
             {stage === "letterOpen" ? (
-              <>Your <span className="italic text-[#ff2a85] text-glow">Invitation</span></>
+              <>Written For <span className="italic text-[#ff2a85] text-glow">Aarya</span></>
             ) : (
-              <>A Little <span className="italic text-[#ff2a85] text-glow">Surprise</span></>
+              <>A Whispered <span className="italic text-[#ff2a85] text-glow">Promise</span></>
             )}
           </motion.h3>
           <p className="font-mono text-xs text-neutral-400 uppercase tracking-widest">
-            {stage === "outerBox" && "Click the gift box to unpack it ✨"}
-            {stage === "innerBox" && "Look inside... there's one more layer ✦"}
-            {stage === "envelope" && "Tap the frosted card to reveal your message ✨"}
-            {(stage === "opening" || stage === "sliding" || stage === "unfolding") && "Unlocking your birthday invitation..."}
-            {stage === "letterOpen" && "Created especially for you"}
+            {stage === "outerBox" && "Unwrap the first layer of my heart ✨"}
+            {stage === "innerBox" && "Look deeper... every layer is yours ✦"}
+            {stage === "envelope" && "Tap the golden seal to read your letter ✨"}
+            {(stage === "opening" || stage === "sliding" || stage === "unfolding") && "Unfolding a message meant only for you..."}
+            {stage === "letterOpen" && "Always and forever yours"}
           </p>
         </div>
       )}
@@ -285,7 +285,7 @@ export default function LoveLetter() {
                   transition={{ duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
                   className="absolute left-3 right-3 top-3 bg-[#fdfbf7] rounded-xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-6 md:p-8 text-stone-800 text-left overflow-hidden max-h-[75vh]"
                 >
-                  {/* Modern Subtle Gold Divider Accent */}
+                  {/* Gold Divider Accent */}
                   <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-[2px] bg-gradient-to-r from-transparent via-[#FFD700] to-transparent opacity-70" />
 
                   {/* Letter Content */}
@@ -302,46 +302,38 @@ export default function LoveLetter() {
                         variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
                         className="text-xl font-medium text-stone-900 font-serif"
                       >
-                        Dear Aarya,
+                        My Dearest Aarya,
                       </motion.p>
                       
                       <motion.p 
                         variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
                         className="text-2xl font-bold text-[#ff2a85] tracking-tight font-serif"
                       >
-                        Happy Birthday! 🎉
+                        Happy Birthday, My Love ❤️
                       </motion.p>
 
                       <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
-                        I wanted to make something a little different this year, so instead of sending just another message, I made this small surprise especially for you.
+                        They say that home is a place, but ever since you walked into my life, I realised home is a person. It is in the gentle sound of your voice, the warmth of your laughter, and the peace I feel whenever you are near.
                       </motion.p>
 
                       <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
-                        Thank you for being such a wonderful friend. From all the random conversations to the funny moments and the memories we&apos;ve shared, they&apos;ve all made our friendship special.
+                        You bring a light into this world that cannot be described—only felt. Thank you for your warmth, your boundless kindness, your strength, and for making every ordinary day feel like an extraordinary blessing.
                       </motion.p>
 
                       <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
-                        I hope this birthday marks the beginning of another amazing year filled with happiness, success, good health, exciting adventures, and countless reasons to smile.
+                        On your special day, my deepest wish is for your heart to be as full of happiness as you make mine every single day. May all your dreams unfold gracefully, and may life always treat you with the sweetness you deserve.
                       </motion.p>
 
                       <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
-                        Keep being the kind, cheerful, and genuine person you are because that&apos;s what makes you truly special.
-                      </motion.p>
-
-                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
-                        May every dream you&apos;re working towards come true, and may life always bring you people and moments that make you happy.
-                      </motion.p>
-
-                      <motion.p variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
-                        Enjoy your day to the fullest, make lots of memories, and don&apos;t forget to smile a little extra today—it&apos;s your day after all.
+                        I promise to stand by your side through every season, celebrating your triumphs, holding your hand through life&apos;s quiet moments, and loving you more with each passing sunset.
                       </motion.p>
 
                       <motion.div 
                         variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
                         className="pt-4 border-t border-stone-200 flex flex-col items-end"
                       >
-                        <p className="font-semibold text-stone-900">Happy Birthday once again! 🎂✨</p>
-                        <p className="italic font-medium text-[#ff2a85] mt-1 font-sans tracking-wide">— Heet</p>
+                        <p className="font-semibold text-stone-900">Forever and always, 💖</p>
+                        <p className="italic font-medium text-[#ff2a85] mt-1 font-sans tracking-wide">— Yours, Heet</p>
                       </motion.div>
                     </motion.div>
                   </div>

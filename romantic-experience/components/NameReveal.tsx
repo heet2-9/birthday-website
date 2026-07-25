@@ -1,122 +1,104 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, Heart } from "lucide-react";
+import confetti from "canvas-confetti";
 
-gsap.registerPlugin(ScrollTrigger);
+const NAME_LETTERS = [
+  { char: "A", meaning: "Adored", message: "Loved beyond words, cherished beyond measure in every quiet moment." },
+  { char: "A", meaning: "Angelic", message: "Your gentle kindness and warm heart bring pure peace into my world." },
+  { char: "R", meaning: "Radiant", message: "A glowing warmth that lights up even the darkest, quietest days." },
+  { char: "Y", meaning: "Youthful", message: "Your vibrant joy and playful laughter make every day feel brand new." },
+  { char: "A", meaning: "Affectionate", message: "Your endless love is the safest, sweetest sanctuary I will ever know." },
+];
 
 export default function NameReveal() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLHeadingElement>(null);
+  const [activeLetter, setActiveLetter] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (!textRef.current || !sectionRef.current) return;
-
-    // Split text mapping animation dynamically
-    const chars = textRef.current.querySelectorAll(".char");
-    
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "center center",
-        scrub: 1,
-      }
+  const handleLetterClick = (index: number) => {
+    setActiveLetter(index);
+    confetti({
+      particleCount: 35,
+      spread: 50,
+      origin: { y: 0.6 },
+      colors: ["#ff2a85", "#FFD700", "#ffffff"],
     });
-
-    tl.fromTo(chars, 
-      { opacity: 0.1, y: 50, filter: "blur(10px)" },
-      { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.05, ease: "power3.out" }
-    );
-
-    // Camera Zoom Simulation on the entire section
-    gsap.to(sectionRef.current, {
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-        pin: true,
-      },
-      scale: 1.05,
-      ease: "none"
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
-  }, []);
-
-  // Your custom cinematic transition text! 
-  const displayString = "WISHES FOR YOU";
-
-  // Generate randomized data for the twinkling stardust background
-  const stars = Array.from({ length: 40 }).map((_, i) => ({
-    id: i,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    size: Math.random() * 2 + 1, // Random size between 1px and 3px
-    delay: Math.random() * 3,    // Random start delay
-    duration: Math.random() * 3 + 2, // Random twinkle speed
-  }));
+  };
 
   return (
-    <div ref={sectionRef} className="relative h-screen w-full flex items-center justify-center bg-[#030303] overflow-hidden">
-      
-      {/* 1. Cinematic Nebula Glows */}
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.15, 0.3, 0.15],
-          rotate: [0, 45, 0]
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-[#ff2a85]/30 to-transparent blur-[120px] pointer-events-none"
-      />
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.3, 1],
-          opacity: [0.1, 0.25, 0.1],
-          rotate: [0, -45, 0]
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-tl from-amber-500/10 via-[#ff2a85]/20 to-transparent blur-[140px] pointer-events-none"
-      />
+    <section className="min-h-screen w-full flex flex-col items-center justify-center relative py-16 px-4 bg-[#030303] overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute w-[500px] h-[500px] rounded-full bg-[#ff2a85]/10 blur-[140px] pointer-events-none z-0" />
 
-      {/* 2. Twinkling Stardust Field */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {stars.map((star) => (
-          <motion.div
-            key={star.id}
-            initial={{ opacity: 0.1 }}
-            animate={{ opacity: [0.1, 0.8, 0.1] }}
-            transition={{
-              duration: star.duration,
-              repeat: Infinity,
-              delay: star.delay,
-              ease: "easeInOut"
-            }}
-            className="absolute rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-            style={{
-              top: star.top,
-              left: star.left,
-              width: star.size,
-              height: star.size,
-            }}
-          />
+      {/* Header */}
+      <div className="text-center space-y-3 mb-12 sm:mb-16 z-10 max-w-lg">
+        <h2 className="font-serif text-3xl sm:text-5xl text-white tracking-tight">
+          The Meaning Of <span className="italic text-[#ff2a85] text-glow">Aarya</span>
+        </h2>
+        <p className="font-mono text-xs text-neutral-400 uppercase tracking-widest">
+          Tap each letter to reveal what makes you so special
+        </p>
+      </div>
+
+      {/* Letters Grid */}
+      <div className="flex flex-wrap justify-center gap-3 sm:gap-6 z-10 max-w-3xl mb-12">
+        {NAME_LETTERS.map((item, index) => (
+          <motion.button
+            key={index}
+            whileHover={{ scale: 1.08, y: -5 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleLetterClick(index)}
+            aria-label={`Reveal meaning for letter ${item.char}`}
+            className={`relative w-14 h-18 sm:w-20 sm:h-24 rounded-2xl flex flex-col items-center justify-center border transition-all duration-300 ${
+              activeLetter === index
+                ? "bg-gradient-to-b from-[#ff2a85] to-rose-700 border-white text-white shadow-[0_0_30px_rgba(255,42,133,0.6)]"
+                : "bg-white/[0.04] backdrop-blur-md border-white/15 text-neutral-200 hover:border-[#ff2a85]/50"
+            }`}
+          >
+            <span className="font-serif text-2xl sm:text-4xl font-bold tracking-tight">{item.char}</span>
+            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest opacity-80 mt-1">
+              {item.meaning}
+            </span>
+          </motion.button>
         ))}
       </div>
-      
-      {/* 3. The Text Reveal (Sits above the background) */}
-      <h2 ref={textRef} className="font-serif text-[8vw] md:text-[6vw] tracking-[0.2em] text-glow font-bold text-white z-20 flex select-none flex-wrap justify-center px-4 text-center">
-        {displayString.split("").map((char, index) => (
-          <span key={index} className="char inline-block">
-            {char === " " ? "\u00A0" : char}
-          </span>
-        ))}
-      </h2>
-    </div>
+
+      {/* Message Modal / Card */}
+      <div className="min-h-[120px] z-10 w-full max-w-md px-4 text-center">
+        <AnimatePresence mode="wait">
+          {activeLetter !== null ? (
+            <motion.div
+              key={activeLetter}
+              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+              className="p-6 rounded-2xl bg-white/[0.05] backdrop-blur-xl border border-white/15 shadow-2xl relative"
+            >
+              <div className="flex items-center justify-center gap-2 mb-2 text-[#ff2a85]">
+                <Sparkles className="w-4 h-4" />
+                <h3 className="font-serif text-lg font-semibold text-white">
+                  {NAME_LETTERS[activeLetter].char} is for {NAME_LETTERS[activeLetter].meaning}
+                </h3>
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <p className="font-serif text-sm sm:text-base text-neutral-300 leading-relaxed italic">
+                &ldquo;{NAME_LETTERS[activeLetter].message}&rdquo;
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              className="flex items-center justify-center gap-2 text-neutral-400 font-serif text-sm italic"
+            >
+              <Heart className="w-4 h-4 text-[#ff2a85]" />
+              <span>Tap a letter above to discover a heartfelt note</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
   );
 }

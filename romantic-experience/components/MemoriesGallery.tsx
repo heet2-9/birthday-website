@@ -7,23 +7,23 @@ import { X, Heart } from "lucide-react";
 const MEMORIES = [
   { 
     id: 1, 
-    src: "images/aarya1.jpeg", 
-    title: "Golden Hour", 
-    caption: "Chasing the final rays of sun, wishing we could freeze time.",
+    src: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=800", 
+    title: "Golden Sunset", 
+    caption: "Chasing the horizon with you, wishing time would stand completely still.",
     date: "Dec 03"
   },
   { 
     id: 2, 
-    src: "images/aarya2.jpeg", 
-    title: "Parisian Walks", 
-    caption: "Lost in quiet alleys, finding our own way.",
+    src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800", 
+    title: "Quiet Strolls", 
+    caption: "Lost in soft conversations, finding our own quiet world together.",
     date: "Jan 21"
   },
   { 
     id: 3, 
-    src: "images/aarya3.jpg", 
-    title: "Winter Solstice", 
-    caption: "Cold hands, warm hearts, and endless laughter.",
+    src: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?auto=format&fit=crop&q=80&w=800", 
+    title: "Winter Magic", 
+    caption: "Cold hands, glowing smiles, and warmth that lasts long after sunset.",
     date: "Feb 18"
   },
 ];
@@ -50,7 +50,7 @@ export default function MemoriesGallery() {
 
   const handleShutter = () => {
     if (stage !== "intro" && stage !== "viewing") return;
-    
+
     setIsFlashing(true);
     setStage("developing");
     
@@ -115,10 +115,10 @@ export default function MemoriesGallery() {
                     className="space-y-1.5 sm:space-y-3"
                   >
                     <h2 className="font-serif text-xl sm:text-3xl md:text-4xl text-white tracking-tight">
-                      Every memory deserves its own <span className="italic text-[#ff2a85] drop-shadow-[0_0_15px_rgba(255,42,133,0.5)]">moment</span>.
+                      Capturing moments that become <span className="italic text-[#ff2a85] drop-shadow-[0_0_15px_rgba(255,42,133,0.5)]">eternity</span>.
                     </h2>
                     <p className="font-mono text-[9px] sm:text-xs text-neutral-400 uppercase tracking-widest">
-                      Click the red shutter to develop a memory
+                      Press the red shutter to reveal a precious memory
                     </p>
                   </motion.div>
                 )}
@@ -247,8 +247,8 @@ export default function MemoriesGallery() {
               className="text-center space-y-4 sm:space-y-6 px-2"
             >
               <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl text-neutral-300 tracking-tight leading-relaxed">
-                Some memories fade... <br/>
-                <span className="italic text-white">The best ones stay forever.</span>
+                Moments turn into memories... <br/>
+                <span className="italic text-white">And memories with you last forever.</span>
               </h3>
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
