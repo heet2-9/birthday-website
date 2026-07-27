@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
@@ -8,21 +8,54 @@ type WishStage = "idle" | "holding" | "darkness" | "revealed";
 
 export default function Timeline() {
   const [stage, setStage] = useState<WishStage>("idle");
+  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
-  // Prevent right-click menu when holding down on mobile[cite: 3]
+  // Scoped context menu prevention to avoid long-press popup without blocking touch release
   useEffect(() => {
-    const handleContextMenu = (e: Event) => e.preventDefault();
-    document.addEventListener("contextmenu", handleContextMenu);
-    return () => document.removeEventListener("contextmenu", handleContextMenu);
-  }, []);
+    const handleContextMenu = (e: Event) => {
+      if (stage === "holding" || stage === "idle") {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("contextmenu", handleContextMenu, { passive: false });
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
+    };
+  }, [stage]);
 
-  const handlePointerDown = () => {
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Record initial touch position to distinguish vertical scrolling from holding
+    touchStartY.current = e.clientY;
+
     if (stage === "idle") {
-      setStage("holding");
+      holdTimerRef.current = setTimeout(() => {
+        setStage("holding");
+      }, 150);
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    // If user moves finger vertically significantly (>20px), assume they are scrolling/swiping
+    if (touchStartY.current !== null && Math.abs(e.clientY - touchStartY.current) > 20) {
+      if (holdTimerRef.current) {
+        clearTimeout(holdTimerRef.current);
+        holdTimerRef.current = null;
+      }
+      if (stage === "holding") {
+        setStage("idle");
+      }
     }
   };
 
   const handlePointerUp = () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    touchStartY.current = null;
+
     if (stage === "holding") {
       setStage("darkness");
 
@@ -34,7 +67,6 @@ export default function Timeline() {
   };
 
   const triggerStardust = () => {
-    // A massive, slow-falling golden and pink stardust explosion from both sides[cite: 3]
     const end = Date.now() + 2.5 * 1000;
     const colors = ["#FFD700", "#FFA500", "#ffffff", "#ff2a85"];
 
@@ -64,13 +96,15 @@ export default function Timeline() {
 
   return (
     <section 
-      className="min-h-screen w-full relative flex flex-col items-center justify-center bg-[#030303] overflow-hidden select-none touch-none"
+      className="min-h-screen w-full relative flex flex-col items-center justify-center bg-[#030303] overflow-hidden select-none touch-pan-y"
       onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
-      {/* Invisible Click Overlay */}
-      <div className="absolute inset-0 z-0 cursor-pointer" />
+      {/* Click/Touch Active Overlay */}
+      <div className="absolute inset-0 z-0 cursor-pointer pointer-events-auto" />
 
       {/* Dynamic Ambient Room Lighting */}
       <motion.div
@@ -103,7 +137,7 @@ export default function Timeline() {
                   Close your eyes & make a wish.
                 </h3>
                 <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#ff2a85] drop-shadow-[0_0_8px_rgba(255,42,133,0.5)]">
-                  Click and hold the screen
+                  Press and hold the screen
                 </p>
               </motion.div>
             )}
@@ -237,26 +271,19 @@ export default function Timeline() {
 
             {/* --- TOP TIER --- */}
             <div className="relative z-40 flex flex-col items-center">
-              {/* Top Face */}
               <div className="w-36 h-14 bg-gradient-to-b from-[#ffffff] to-[#faf5f0] rounded-[50%] border border-white shadow-[inset_0_-3px_6px_rgba(0,0,0,0.04)] absolute -top-7 z-20" />
-              {/* Body */}
               <div className="w-36 h-20 bg-gradient-to-r from-[#e8dfd8] via-[#ffffff] to-[#d6c7b8] rounded-b-[50%] shadow-[0_15px_25px_rgba(0,0,0,0.25)] relative overflow-hidden border-b border-[#c2b2a3]/30">
-                {/* Gloss Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent w-1/2 left-1/4 skew-x-12" />
-                {/* Drips */}
                 <div className="absolute top-0 w-full flex justify-between px-3 opacity-90">
                   <div className="w-3 h-7 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm" />
                   <div className="w-2.5 h-10 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm mt-1" />
                   <div className="w-3.5 h-6 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm" />
                   <div className="w-2 h-8 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm mt-2" />
                 </div>
-                {/* Pink Ribbon */}
                 <div className="absolute bottom-5 w-full h-3 bg-gradient-to-r from-[#cc1a66] via-[#ff2a85] to-[#990a47] shadow-sm opacity-90" />
-                {/* Gold Pearls */}
                 <div className="absolute bottom-[26px] left-6 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_3px_rgba(255,215,0,0.8)]" />
                 <div className="absolute bottom-[22px] right-8 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_3px_rgba(255,215,0,0.8)]" />
               </div>
-              {/* Piped Border */}
               <div className="absolute -bottom-2 w-[105%] flex justify-around px-1 z-30 drop-shadow-md">
                 {Array.from({ length: 14 }).map((_, i) => (
                   <div key={i} className="w-3.5 h-3.5 rounded-full bg-gradient-to-br from-white to-[#f0e6d9] shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.1)]" />
@@ -269,7 +296,6 @@ export default function Timeline() {
               <div className="w-52 h-16 bg-gradient-to-b from-[#ffffff] to-[#faf5f0] rounded-[50%] border border-white shadow-[inset_0_-3px_6px_rgba(0,0,0,0.04)] absolute -top-8 z-20" />
               <div className="w-52 h-24 bg-gradient-to-r from-[#e8dfd8] via-[#ffffff] to-[#d6c7b8] rounded-b-[50%] shadow-[0_20px_35px_rgba(0,0,0,0.3)] relative overflow-hidden border-b border-[#c2b2a3]/30">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/2 left-1/4 skew-x-12" />
-                {/* Drips */}
                 <div className="absolute top-0 w-full flex justify-around px-2 opacity-90">
                   <div className="w-3 h-9 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm mt-1" />
                   <div className="w-4 h-6 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm" />
@@ -277,20 +303,16 @@ export default function Timeline() {
                   <div className="w-3.5 h-7 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm mt-2" />
                   <div className="w-3 h-10 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm" />
                 </div>
-                {/* Pink Ribbon */}
                 <div className="absolute bottom-6 w-full h-3.5 bg-gradient-to-r from-[#cc1a66] via-[#ff2a85] to-[#990a47] shadow-sm opacity-90" />
-                {/* Gold Pearls */}
                 <div className="absolute bottom-12 left-10 w-2 h-2 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_4px_rgba(255,215,0,0.8)]" />
                 <div className="absolute bottom-10 right-14 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_3px_rgba(255,215,0,0.8)]" />
                 <div className="absolute bottom-[30px] right-24 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_3px_rgba(255,215,0,0.8)]" />
               </div>
-              {/* Piped Border */}
               <div className="absolute -bottom-2 w-[105%] flex justify-around px-1 z-30 drop-shadow-md">
                 {Array.from({ length: 18 }).map((_, i) => (
                   <div key={i} className="w-4 h-4 rounded-full bg-gradient-to-br from-white to-[#f0e6d9] shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.1)]" />
                 ))}
               </div>
-              {/* Floral Decor (Left edge) */}
               <div className="absolute -bottom-1 left-2 z-40 flex items-center justify-center drop-shadow-md scale-75">
                  <div className="absolute w-4 h-4 bg-gradient-to-br from-pink-200 to-[#ff2a85] rounded-[50%_0_50%_50%] rotate-45 transform -translate-x-2 -translate-y-1" />
                  <div className="absolute w-4 h-4 bg-gradient-to-br from-pink-200 to-[#ff2a85] rounded-[50%_50%_0_50%] rotate-45 transform translate-x-2 -translate-y-1" />
@@ -303,7 +325,6 @@ export default function Timeline() {
               <div className="w-72 h-20 bg-gradient-to-b from-[#ffffff] to-[#faf5f0] rounded-[50%] border border-white shadow-[inset_0_-3px_6px_rgba(0,0,0,0.04)] absolute -top-10 z-20" />
               <div className="w-72 h-32 bg-gradient-to-r from-[#e8dfd8] via-[#ffffff] to-[#c7b7a7] rounded-b-[50%] shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden border-b border-[#a39485]/40">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/2 left-1/4 skew-x-12" />
-                {/* Drips */}
                 <div className="absolute top-0 w-full flex justify-around px-4 opacity-90">
                   <div className="w-3 h-14 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm mt-2" />
                   <div className="w-4 h-8 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm" />
@@ -312,21 +333,17 @@ export default function Timeline() {
                   <div className="w-3 h-12 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm" />
                   <div className="w-3.5 h-7 bg-gradient-to-b from-white to-[#fdfbf9] rounded-b-full shadow-sm mt-1" />
                 </div>
-                {/* Pink Ribbon */}
                 <div className="absolute bottom-8 w-full h-4 bg-gradient-to-r from-[#cc1a66] via-[#ff2a85] to-[#990a47] shadow-sm opacity-90" />
-                {/* Gold Pearls */}
                 <div className="absolute bottom-16 left-12 w-2 h-2 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_5px_rgba(255,215,0,0.8)]" />
                 <div className="absolute bottom-20 left-20 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_3px_rgba(255,215,0,0.8)]" />
                 <div className="absolute bottom-14 right-16 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_5px_rgba(255,215,0,0.8)]" />
                 <div className="absolute bottom-[42px] right-28 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-yellow-100 to-amber-500 shadow-[0_0_3px_rgba(255,215,0,0.8)]" />
               </div>
-              {/* Piped Border */}
               <div className="absolute -bottom-2.5 w-[104%] flex justify-around px-1 z-30 drop-shadow-lg">
                 {Array.from({ length: 24 }).map((_, i) => (
                   <div key={i} className="w-4 h-4 rounded-full bg-gradient-to-br from-white to-[#f0e6d9] shadow-[inset_-1px_-1px_3px_rgba(0,0,0,0.15)]" />
                 ))}
               </div>
-              {/* Floral Decor (Right edge) */}
               <div className="absolute -bottom-2 right-4 z-40 flex items-center justify-center drop-shadow-md scale-90">
                  <div className="absolute w-5 h-5 bg-gradient-to-br from-pink-200 to-[#ff2a85] rounded-[50%_0_50%_50%] rotate-45 transform -translate-x-2.5 -translate-y-1.5" />
                  <div className="absolute w-5 h-5 bg-gradient-to-br from-pink-200 to-[#ff2a85] rounded-[50%_50%_0_50%] rotate-45 transform translate-x-2.5 -translate-y-1.5" />
@@ -337,12 +354,9 @@ export default function Timeline() {
 
             {/* --- PREMIUM GLASS CAKE STAND --- */}
             <div className="relative z-0 -mt-14">
-              {/* Stand Plate */}
               <div className="w-[340px] h-28 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl rounded-[50%] border border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.9),inset_0_0_30px_rgba(255,255,255,0.15)] relative flex justify-center">
                  <div className="absolute top-2 w-[95%] h-[90%] rounded-[50%] border border-white/10" />
-                 {/* Glass Stem */}
                  <div className="absolute -bottom-6 w-16 h-12 bg-gradient-to-r from-white/5 via-white/20 to-white/5 backdrop-blur-md shadow-[inset_0_0_10px_rgba(255,255,255,0.1)] border-x border-white/10 z-0" />
-                 {/* Glass Base */}
                  <div className="absolute -bottom-10 w-32 h-10 bg-gradient-to-b from-white/10 to-transparent backdrop-blur-xl rounded-[50%] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.8)] z-10" />
               </div>
             </div>
@@ -351,7 +365,7 @@ export default function Timeline() {
         </div>
       </div>
 
-      {/* FINAL REVEAL MESSAGE (Anchored top, un-altered) */}
+      {/* FINAL REVEAL MESSAGE */}
       <div className="absolute top-[12%] left-0 w-full flex justify-center pointer-events-none z-50 px-4">
         <AnimatePresence>
           {stage === "revealed" && (

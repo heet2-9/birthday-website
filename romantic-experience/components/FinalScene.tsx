@@ -334,7 +334,7 @@ export default function FinalScene() {
             transition={{ delay: 0.3 }}
             className="font-serif text-3xl sm:text-5xl md:text-6xl text-white tracking-tight"
           >
-            Forever & <span className="italic text-[#ff2a85] text-glow">Always</span>
+           I Love You<span className="italic text-[#ff2a85] text-glow">, My Sunshine🌻❤️</span>
           </motion.h2>
 
           <motion.p

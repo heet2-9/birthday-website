@@ -425,7 +425,7 @@ export default function Hero() {
                       <Sparkles className="w-2 h-2 text-[#ff2a85]" />
                     </div>
                     <p className="font-mono text-[6.5px] sm:text-[7.5px] text-amber-200/80 uppercase tracking-[0.16em]">
-                      Birthday Symphony • Special Edition
+                     Birthday Symphony • Dedicated to Aarya
                     </p>
                   </div>
 
