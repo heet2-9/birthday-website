@@ -13,15 +13,15 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress((oldProgress) => {
-        if (oldProgress === 100) {
+        if (oldProgress >= 100) {
           clearInterval(timer);
-          setTimeout(onComplete, 600);
+          setTimeout(onComplete, 400);
           return 100;
         }
-        const diff = Math.random() * 12;
+        const diff = Math.random() * 18 + 8;
         return Math.min(oldProgress + diff, 100);
       });
-    }, 120);
+    }, 70);
 
     return () => clearInterval(timer);
   }, [onComplete]);

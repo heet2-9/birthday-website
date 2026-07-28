@@ -168,11 +168,22 @@ export default function CanvasParticles() {
       { threshold: 0.05 }
     );
 
-    observer.observe(canvas);
-    startLoop();
+    let idleId: any = null;
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      idleId = (window as any).requestIdleCallback(() => startLoop(), { timeout: 300 });
+    } else {
+      idleId = setTimeout(() => startLoop(), 200);
+    }
 
     return () => {
       stopLoop();
+      if (idleId) {
+        if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
+          (window as any).cancelIdleCallback(idleId);
+        } else {
+          clearTimeout(idleId);
+        }
+      }
       if (resizeTimeout) clearTimeout(resizeTimeout);
       window.removeEventListener("resize", debouncedResize);
       document.removeEventListener("visibilitychange", handleVisibilityChange);

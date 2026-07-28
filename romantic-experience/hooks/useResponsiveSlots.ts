@@ -4,20 +4,30 @@ export function useResponsiveSlots(): number {
   const [slotCountPerSide, setSlotCountPerSide] = useState<number>(4);
 
   useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width < 640) {
-        setSlotCountPerSide(2); // Mobile: 2 per side (4 total)
-      } else if (width < 1024) {
-        setSlotCountPerSide(3); // Tablet: 3 per side (6 total)
+    if (typeof window === "undefined") return;
+
+    const mobileQuery = window.matchMedia("(max-width: 639px)");
+    const tabletQuery = window.matchMedia("(min-width: 640px) and (max-width: 1023px)");
+
+    const updateSlots = () => {
+      if (mobileQuery.matches) {
+        setSlotCountPerSide(2);
+      } else if (tabletQuery.matches) {
+        setSlotCountPerSide(3);
       } else {
-        setSlotCountPerSide(4); // Desktop: 4 per side (8 total)
+        setSlotCountPerSide(4);
       }
     };
 
-    handleResize();
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => window.removeEventListener("resize", handleResize);
+    updateSlots();
+
+    mobileQuery.addEventListener("change", updateSlots);
+    tabletQuery.addEventListener("change", updateSlots);
+
+    return () => {
+      mobileQuery.removeEventListener("change", updateSlots);
+      tabletQuery.removeEventListener("change", updateSlots);
+    };
   }, []);
 
   return slotCountPerSide;

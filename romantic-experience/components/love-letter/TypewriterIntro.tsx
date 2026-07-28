@@ -26,7 +26,7 @@ export function TypewriterIntro({ isInView, onComplete }: TypewriterIntroProps) 
     if (displayedText.length < currentLine.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(currentLine.slice(0, displayedText.length + 1));
-        if (audioRef.current) {
+        if (audioRef.current && audioRef.current.readyState >= 2) {
           audioRef.current.currentTime = 0;
           audioRef.current.play().catch(() => {});
         }
