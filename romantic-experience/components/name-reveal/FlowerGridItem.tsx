@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import { motion } from "framer-motion";
 import { FlowerQuality } from "@/types";
 import { SunflowerSVG, RoseSVG, TulipSVG, LavenderSVG, DaisySVG } from "./BotanicalSVGs";
@@ -12,7 +12,7 @@ interface FlowerGridItemProps {
   onSelect: () => void;
 }
 
-export function FlowerGridItem({ item, isSelected, onSelect }: FlowerGridItemProps) {
+function FlowerGridItemComponent({ item, isSelected, onSelect }: FlowerGridItemProps) {
   return (
     <motion.button
       whileHover={{ scale: 1.06, y: -6 }}
@@ -37,15 +37,14 @@ export function FlowerGridItem({ item, isSelected, onSelect }: FlowerGridItemPro
       <div className="relative my-auto flex items-center justify-center">
         <motion.div
           animate={{
-            scale: isSelected ? 1.25 : [1, 1.05, 1],
+            scale: isSelected ? 1.25 : 1,
             rotate: isSelected ? [0, 10, -10, 0] : 0,
           }}
           transition={{
-            duration: isSelected ? 1 : 4,
-            repeat: isSelected ? 0 : Infinity,
+            duration: isSelected ? 1 : 0.3,
             ease: "easeInOut",
           }}
-          className="filter drop-shadow-[0_0_12px_rgba(255,215,0,0.5)]"
+          className="drop-shadow-[0_0_12px_rgba(255,215,0,0.5)]"
         >
           {item.flowerType === "sunflower" && <SunflowerSVG size="w-16 h-16 sm:w-20 sm:h-20" />}
           {item.flowerType === "rose" && <RoseSVG size="w-14 h-14 sm:w-18 sm:h-18" />}
@@ -63,3 +62,5 @@ export function FlowerGridItem({ item, isSelected, onSelect }: FlowerGridItemPro
     </motion.button>
   );
 }
+
+export const FlowerGridItem = memo(FlowerGridItemComponent);

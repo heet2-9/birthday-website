@@ -40,15 +40,19 @@ class Particle {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.save();
+    // Outer subtle glow halo
+    ctx.globalAlpha = this.alpha * 0.35;
+    ctx.fillStyle = "#ff2a85";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core bright particle
     ctx.globalAlpha = this.alpha;
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = "#ff2a85";
-    ctx.fillStyle = "rgba(255, 42, 133, 0.8)";
+    ctx.fillStyle = "rgba(255, 150, 200, 0.95)";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
   }
 }
 
@@ -73,7 +77,8 @@ export default function CanvasParticles() {
       particles = [];
       if (isReducedMotion || !canvas) return;
 
-      const count = Math.min(Math.floor(window.innerWidth / 15), 80);
+      const isMobile = window.innerWidth < 640;
+      const count = Math.min(Math.floor(window.innerWidth / (isMobile ? 22 : 16)), isMobile ? 35 : 70);
       for (let i = 0; i < count; i++) {
         particles.push(new Particle(canvas.width, canvas.height, true));
       }

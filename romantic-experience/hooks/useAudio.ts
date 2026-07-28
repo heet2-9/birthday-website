@@ -43,8 +43,13 @@ export function useAudio(src: string = "/birthday-piano.mpeg"): UseAudioReturn {
       setDuration(audio.duration || 180);
     };
 
+    let lastSec = -1;
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      const sec = Math.floor(audio.currentTime);
+      if (sec !== lastSec) {
+        lastSec = sec;
+        setCurrentTime(audio.currentTime);
+      }
     };
 
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);

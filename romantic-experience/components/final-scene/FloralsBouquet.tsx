@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
@@ -9,7 +9,7 @@ interface FloralsBouquetProps {
   onFlowerClick: () => void;
 }
 
-export function FloralsBouquet({ hasFlowerClicked, onFlowerClick }: FloralsBouquetProps) {
+function FloralsBouquetComponent({ hasFlowerClicked, onFlowerClick }: FloralsBouquetProps) {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[280px] sm:min-h-[320px] pt-4">
       <div className="relative flex items-center justify-center w-full">
@@ -146,6 +146,8 @@ export function FloralsBouquet({ hasFlowerClicked, onFlowerClick }: FloralsBouqu
     </div>
   );
 }
+
+export const FloralsBouquet = memo(FloralsBouquetComponent);
 
 function SunflowerSVG({ size = "w-20 h-20" }: { size?: string }) {
   return (

@@ -44,38 +44,46 @@ export function FireworksStage() {
       />
 
       {DUST.map((p) => (
-        <motion.div
+        <div
           key={`dust-${p.id}`}
-          initial={{ opacity: 0, y: "100vh", x: 0 }}
-          animate={{ opacity: [0, 0.8, 0], y: "-20vh", x: [0, 30, -30, 0] }}
-          transition={{ duration: p.duration, delay: p.delay, ease: "linear", repeat: Infinity }}
-          className="absolute rounded-full bg-accent z-10 pointer-events-none shadow-[0_0_8px_rgba(255,42,133,0.8)]"
-          style={{ left: p.left, width: p.size, height: p.size }}
+          className="absolute rounded-full bg-accent z-10 pointer-events-none shadow-[0_0_8px_rgba(255,42,133,0.8)] animate-float-up"
+          style={{
+            left: p.left,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            "--duration": `${p.duration}s`,
+            "--delay": `${p.delay}s`,
+            "--drift": "30px",
+          } as React.CSSProperties}
         />
       ))}
 
       {STARS.map((s) => (
-        <motion.div
+        <div
           key={`star-${s.id}`}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.8, 1.2, 0.8] }}
-          transition={{ duration: s.duration, delay: s.delay, repeat: Infinity }}
-          className="absolute w-1 h-1 bg-white rounded-full z-10 pointer-events-none shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-          style={{ left: s.left, top: s.top }}
+          className="absolute w-1 h-1 bg-white rounded-full z-10 pointer-events-none shadow-[0_0_10px_rgba(255,255,255,0.8)] animate-twinkle"
+          style={{
+            left: s.left,
+            top: s.top,
+            "--duration": `${s.duration}s`,
+            "--delay": `${s.delay}s`,
+          } as React.CSSProperties}
         />
       ))}
 
       {EARLY_EMOJIS.map((e) => (
-        <motion.div
+        <div
           key={`emoji-${e.id}`}
-          initial={{ opacity: 0, y: "100vh", rotate: 0 }}
-          animate={{ opacity: [0, 1, 1, 0], y: "-20vh", rotate: e.rotation }}
-          transition={{ duration: e.duration, delay: e.delay, ease: "linear", repeat: Infinity }}
-          className="absolute text-xl sm:text-2xl md:text-3xl z-10 pointer-events-none drop-shadow-lg"
-          style={{ left: e.left }}
+          className="absolute text-xl sm:text-2xl md:text-3xl z-10 pointer-events-none drop-shadow-lg animate-float-up"
+          style={{
+            left: e.left,
+            "--duration": `${e.duration}s`,
+            "--delay": `${e.delay}s`,
+            "--rot": `${e.rotation}deg`,
+          } as React.CSSProperties}
         >
           {e.emoji}
-        </motion.div>
+        </div>
       ))}
 
       <motion.div

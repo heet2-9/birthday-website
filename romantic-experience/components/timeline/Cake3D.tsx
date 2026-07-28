@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { WishStage } from "@/types";
 import { CandleFlame } from "./CandleFlame";
@@ -9,29 +9,39 @@ interface Cake3DProps {
   stage: WishStage;
 }
 
-export function Cake3D({ stage }: Cake3DProps) {
+function Cake3DComponent({ stage }: Cake3DProps) {
+  const sparkles = useMemo(() => {
+    return Array.from({ length: 12 }).map((_, i) => ({
+      id: i,
+      left: `${20 + (i * 5) % 60}%`,
+      top: `${20 + (i * 7) % 60}%`,
+      duration: 3 + (i % 3),
+      delay: (i % 4) * 0.8,
+    }));
+  }, []);
+
   return (
     <div className="relative flex flex-col items-center justify-center w-full max-w-lg z-20 pointer-events-none mb-10">
       {/* Shimmering Particles */}
       <div className="absolute inset-0 z-50 pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {sparkles.map((sp) => (
           <motion.div
-            key={`sparkle-${i}`}
+            key={`sparkle-${sp.id}`}
             animate={{
               y: [0, -30, -60],
               opacity: [0, 0.8, 0],
               scale: [0, 1, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: sp.duration,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: sp.delay,
               ease: "easeInOut",
             }}
             className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_5px_rgba(255,255,255,1)]"
             style={{
-              left: `${20 + Math.random() * 60}%`,
-              top: `${20 + Math.random() * 60}%`,
+              left: sp.left,
+              top: sp.top,
             }}
           />
         ))}
@@ -155,3 +165,5 @@ export function Cake3D({ stage }: Cake3DProps) {
     </div>
   );
 }
+
+export const Cake3D = memo(Cake3DComponent);

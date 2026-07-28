@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BalloonSlotData } from "@/types";
 
@@ -10,7 +10,12 @@ interface BalloonItemProps {
   onPop: (e: React.MouseEvent | React.TouchEvent) => void;
 }
 
-export function BalloonItem({ data, isPopped, onPop }: BalloonItemProps) {
+function BalloonItemComponent({ data, isPopped, onPop }: BalloonItemProps) {
+  const handlePop = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    onPop(e);
+  };
+
   return (
     <div className="w-full h-20 sm:h-24 md:h-28 flex items-center justify-center relative select-none">
       {/* 1. Unpopped Floating Balloon */}
@@ -26,12 +31,9 @@ export function BalloonItem({ data, isPopped, onPop }: BalloonItemProps) {
               opacity: { duration: 1, delay: data.delay },
               exit: { duration: 0.15, ease: "easeOut" },
             }}
-            className="absolute flex flex-col items-center cursor-pointer pointer-events-auto z-10"
-            onClick={onPop}
-            onTouchStart={(e) => {
-              e.stopPropagation();
-              onPop(e);
-            }}
+            className="absolute flex flex-col items-center cursor-pointer pointer-events-auto z-10 touch-manipulation"
+            onClick={handlePop}
+            onTouchEnd={handlePop}
           >
             {/* Idle floating motion inside fixed slot */}
             <motion.div
@@ -91,3 +93,5 @@ export function BalloonItem({ data, isPopped, onPop }: BalloonItemProps) {
     </div>
   );
 }
+
+export const BalloonItem = memo(BalloonItemComponent);

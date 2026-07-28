@@ -177,25 +177,18 @@ export function AudioPlayer() {
           <div className="w-4" />
         </div>
 
-        <div className="w-full flex items-center justify-center gap-0.5 pt-0.5 pb-0.5 z-20">
+        <div className="w-full flex items-center justify-center gap-0.5 pt-0.5 pb-0.5 z-20 h-6">
           {VISUALIZER_BARS.map((height, idx) => (
-            <motion.div
+            <div
               key={idx}
-              animate={{
-                height: isPlaying
-                  ? [height * 0.4, height * 1.1, height * 0.5]
-                  : [3, 4, 3],
-                opacity: isPlaying ? [0.6, 1, 0.6] : 0.35,
+              className={`w-0.5 rounded-full bg-gradient-to-t from-[#ff2a85] via-pink-300 to-[#FFD700] shadow-[0_0_3px_rgba(255,42,133,0.6)] ${
+                isPlaying ? "animate-bar-pulse" : "opacity-35"
+              }`}
+              style={{
+                height: `${height}px`,
+                animationDuration: `${0.4 + (idx % 5) * 0.1}s`,
+                animationDelay: `${idx * 0.05}s`,
               }}
-              transition={{
-                duration: isPlaying ? 0.4 + (idx % 5) * 0.1 : 3,
-                repeat: Infinity,
-                repeatType: "mirror",
-                ease: "easeInOut",
-                delay: idx * 0.05,
-              }}
-              className="w-0.5 rounded-full bg-gradient-to-t from-[#ff2a85] via-pink-300 to-[#FFD700] shadow-[0_0_3px_rgba(255,42,133,0.6)]"
-              style={{ minHeight: "2.5px" }}
             />
           ))}
         </div>

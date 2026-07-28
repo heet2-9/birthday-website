@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { MemoryItem } from "@/types";
 
@@ -10,7 +11,7 @@ interface PolaroidCardProps {
   onClick?: () => void;
 }
 
-export function PolaroidCard({ memory, isDeveloping, onClick }: PolaroidCardProps) {
+function PolaroidCardComponent({ memory, isDeveloping, onClick }: PolaroidCardProps) {
   return (
     <motion.div
       whileHover={!isDeveloping ? { scale: 1.05, rotate: 0, y: -10, zIndex: 50 } : {}}
@@ -21,9 +22,7 @@ export function PolaroidCard({ memory, isDeveloping, onClick }: PolaroidCardProp
     >
       <div className="w-full aspect-square bg-[#111] relative overflow-hidden shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] mb-8 sm:mb-14">
         {/* Memory Photo Image */}
-        <motion.img
-          src={memory.src}
-          alt={memory.title}
+        <motion.div
           animate={{
             filter: isDeveloping
               ? [
@@ -35,8 +34,18 @@ export function PolaroidCard({ memory, isDeveloping, onClick }: PolaroidCardProp
             opacity: isDeveloping ? [0.1, 0.5, 1] : 1,
           }}
           transition={{ duration: 2.5, ease: "easeInOut", delay: 0.5 }}
-          className="w-full h-full object-cover"
-        />
+          className="w-full h-full relative"
+        >
+          <Image
+            src={memory.src}
+            alt={memory.title}
+            fill
+            sizes="(max-width: 640px) 220px, (max-width: 768px) 250px, 280px"
+            quality={80}
+            className="object-cover"
+            loading="lazy"
+          />
+        </motion.div>
       </div>
 
       <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-4 right-2 sm:right-4 flex flex-col items-center text-center">
@@ -54,3 +63,5 @@ export function PolaroidCard({ memory, isDeveloping, onClick }: PolaroidCardProp
     </motion.div>
   );
 }
+
+export const PolaroidCard = memo(PolaroidCardComponent);
