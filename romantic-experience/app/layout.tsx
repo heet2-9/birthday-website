@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { AudioProvider } from "@/context/AudioContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${playfair.variable}`}>
       <body className={`${inter.className} bg-[#030303] text-white antialiased selection:bg-[#ff2a85] selection:text-white`}>
-        {children}
+        <AudioProvider>{children}</AudioProvider>
       </body>
     </html>
   );

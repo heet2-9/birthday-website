@@ -3,13 +3,15 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WishStage } from "@/types";
-import { safeConfetti } from "@/lib/confetti";
+import { safeConfetti, triggerCelebrationConfetti } from "@/lib/confetti";
+import { playWhooshSound } from "@/lib/audioSynthesis";
 import { Cake3D } from "./timeline/Cake3D";
 
 export default function Timeline() {
   const [stage, setStage] = useState<WishStage>("idle");
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const isBlownRef = useRef<boolean>(false);
 
   useEffect(() => {
     const handleContextMenu = (e: Event) => {
@@ -52,10 +54,29 @@ export default function Timeline() {
     })();
   }, []);
 
+  // Blow Out / Extinguish Candles Handler (Triggered by Tap or Press & Hold)
+  const handleBlowOut = useCallback(() => {
+    if (isBlownRef.current || stage === "darkness" || stage === "revealed") return;
+    isBlownRef.current = true;
+
+    // 1. Play soft organic blowing sound
+    playWhooshSound();
+
+    // 2. Extinguish candle flames, darken wicks, and puff smoke
+    setStage("darkness");
+
+    // 3. Reveal wish message and launch celebration confetti after 600ms
+    setTimeout(() => {
+      setStage("revealed");
+      triggerCelebrationConfetti();
+      triggerStardust();
+    }, 600);
+  }, [stage, triggerStardust]);
+
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       touchStartY.current = e.clientY;
-      if (stage === "idle") {
+      if (stage === "idle" && !isBlownRef.current) {
         holdTimerRef.current = setTimeout(() => {
           setStage("holding");
         }, 150);
@@ -86,14 +107,10 @@ export default function Timeline() {
     }
     touchStartY.current = null;
 
-    if (stage === "holding") {
-      setStage("darkness");
-      setTimeout(() => {
-        setStage("revealed");
-        triggerStardust();
-      }, 600);
+    if (stage === "holding" && !isBlownRef.current) {
+      handleBlowOut();
     }
-  }, [stage, triggerStardust]);
+  }, [stage, handleBlowOut]);
 
   return (
     <section
@@ -106,6 +123,7 @@ export default function Timeline() {
     >
       <div className="absolute inset-0 z-0 cursor-pointer pointer-events-auto" />
 
+      {/* Radial Ambient Background Glow */}
       <motion.div
         animate={{
           opacity: stage === "darkness" || stage === "revealed" ? 0 : [0.15, 0.25, 0.15],
@@ -119,8 +137,9 @@ export default function Timeline() {
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-radial from-amber-500/20 via-[#ff2a85]/5 to-transparent blur-[120px] pointer-events-none z-0"
       />
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-3xl px-4 mt-20 md:mt-10">
-        <div className="h-20 flex items-center justify-center mb-16 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-3xl px-4 mt-12 md:mt-8 py-4">
+        {/* Header Text, Instructions & Revealed Wish */}
+        <div className="min-h-[5rem] md:min-h-[7rem] flex flex-col items-center justify-center mb-4 md:mb-6 text-center w-full">
           <AnimatePresence mode="wait">
             {stage === "idle" && (
               <motion.div
@@ -128,13 +147,13 @@ export default function Timeline() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="space-y-2 pointer-events-none"
+                className="space-y-3 pointer-events-none"
               >
-                <h3 className="font-serif text-2xl md:text-3xl text-neutral-300 drop-shadow-md">
+                <h3 className="font-serif text-2xl md:text-3xl text-neutral-200 drop-shadow-md">
                   Close your eyes & make a wish.
                 </h3>
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#ff2a85] drop-shadow-[0_0_8px_rgba(255,42,133,0.5)]">
-                  Press and hold the screen
+                <p className="font-mono text-xs uppercase tracking-[0.22em] text-[#ff2a85] drop-shadow-[0_0_8px_rgba(255,42,133,0.5)]">
+                  Press and hold the screen or tap the candles
                 </p>
               </motion.div>
             )}
@@ -155,38 +174,46 @@ export default function Timeline() {
                 </p>
               </motion.div>
             )}
+
+            {stage === "revealed" && (
+              <motion.div
+                key="text-revealed"
+                initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                className="text-center space-y-3 md:space-y-5 max-w-xl mx-auto pointer-events-none"
+              >
+                <motion.p
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                  className="font-serif text-xl md:text-3xl text-amber-300 drop-shadow-[0_0_12px_rgba(251,191,36,0.7)] italic"
+                >
+                  ✨ Your wish has been made. Happy Birthday! ❤️
+                </motion.p>
+
+                <motion.h2
+                  animate={{
+                    textShadow: [
+                      "0 0 20px rgba(255,42,133,0)",
+                      "0 0 40px rgba(255,42,133,0.5)",
+                      "0 0 20px rgba(255,42,133,0)",
+                    ],
+                  }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-tight"
+                >
+                  Cheers to 17🥳<br />
+                  <span className="italic text-amber-200">Wishing you endless happiness.</span>
+                </motion.h2>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
-        <Cake3D stage={stage} />
-      </div>
-
-      <div className="absolute top-[12%] left-0 w-full flex justify-center pointer-events-none z-50 px-4">
-        <AnimatePresence>
-          {stage === "revealed" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="text-center space-y-4 md:space-y-6"
-            >
-              <motion.h2
-                animate={{
-                  textShadow: [
-                    "0 0 20px rgba(255,42,133,0)",
-                    "0 0 40px rgba(255,42,133,0.4)",
-                    "0 0 20px rgba(255,42,133,0)",
-                  ],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="font-serif text-4xl md:text-6xl text-white tracking-tight"
-              >
-                Cheers to 17🥳<br />
-                <span className="italic text-amber-200">Wishing you endless happiness.</span>
-              </motion.h2>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* 3D Birthday Cake */}
+        <Cake3D stage={stage} onCakeClick={handleBlowOut} />
       </div>
     </section>
   );

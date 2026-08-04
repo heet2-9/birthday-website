@@ -72,7 +72,7 @@ export function AudioPlayer() {
           <div className="flex items-center justify-center gap-1">
             <Sparkles className="w-2 h-2 text-[#ff2a85]" />
             <h2 className="font-serif text-[11px] xs:text-xs sm:text-sm text-white tracking-tight font-semibold">
-              For Aarya <span className="text-[#ff2a85]">❤️</span>
+              For Aaru <span className="text-[#ff2a85]">❤️</span>
             </h2>
             <Sparkles className="w-2 h-2 text-[#ff2a85]" />
           </div>
@@ -181,9 +181,8 @@ export function AudioPlayer() {
           {VISUALIZER_BARS.map((height, idx) => (
             <div
               key={idx}
-              className={`w-0.5 rounded-full bg-gradient-to-t from-[#ff2a85] via-pink-300 to-[#FFD700] shadow-[0_0_3px_rgba(255,42,133,0.6)] ${
-                isPlaying ? "animate-bar-pulse" : "opacity-35"
-              }`}
+              className={`w-0.5 rounded-full bg-gradient-to-t from-[#ff2a85] via-pink-300 to-[#FFD700] shadow-[0_0_3px_rgba(255,42,133,0.6)] ${isPlaying ? "animate-bar-pulse" : "opacity-35"
+                }`}
               style={{
                 height: `${height}px`,
                 animationDuration: `${0.4 + (idx % 5) * 0.1}s`,

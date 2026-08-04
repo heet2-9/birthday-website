@@ -7,9 +7,10 @@ import { CandleFlame } from "./CandleFlame";
 
 interface Cake3DProps {
   stage: WishStage;
+  onCakeClick?: () => void;
 }
 
-function Cake3DComponent({ stage }: Cake3DProps) {
+function Cake3DComponent({ stage, onCakeClick }: Cake3DProps) {
   const sparkles = useMemo(() => {
     return Array.from({ length: 12 }).map((_, i) => ({
       id: i,
@@ -20,8 +21,10 @@ function Cake3DComponent({ stage }: Cake3DProps) {
     }));
   }, []);
 
+  const isExtinguished = stage === "darkness" || stage === "revealed";
+
   return (
-    <div className="relative flex flex-col items-center justify-center w-full max-w-lg z-20 pointer-events-none mb-10">
+    <div className="relative flex flex-col items-center justify-center w-full max-w-lg z-20 pointer-events-none mb-6 md:mb-10">
       {/* Shimmering Particles */}
       <div className="absolute inset-0 z-50 pointer-events-none">
         {sparkles.map((sp) => (
@@ -50,10 +53,14 @@ function Cake3DComponent({ stage }: Cake3DProps) {
       <motion.div
         animate={{ y: [-3, 3, -3] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="relative flex flex-col items-center scale-[0.85] md:scale-100 mt-8"
+        className="relative flex flex-col items-center scale-[0.85] md:scale-100 mt-4 md:mt-8"
       >
-        {/* Candles */}
-        <div className="relative z-50 flex justify-center gap-8 mb-[-12px]">
+        {/* Candles Container with Tap / Click to Blow Out Interaction */}
+        <div
+          onClick={onCakeClick}
+          className="relative z-50 flex justify-center gap-8 mb-[-12px] pointer-events-auto cursor-pointer group"
+          title="Tap to blow out candles"
+        >
           {[1, 2, 3].map((candle, idx) => (
             <motion.div
               key={`candle-${candle}`}
@@ -62,7 +69,21 @@ function Cake3DComponent({ stage }: Cake3DProps) {
               className="relative flex flex-col items-center"
             >
               <CandleFlame stage={stage} />
-              <div className="w-2.5 h-16 bg-gradient-to-r from-[#ffe4e1] via-white to-[#f5c6cb] rounded-t-sm shadow-md z-20 overflow-hidden relative border border-white/50">
+
+              {/* Candle Wick with Darkening Effect */}
+              <motion.div
+                animate={{
+                  backgroundColor: isExtinguished ? "#171717" : "#525252",
+                  boxShadow: isExtinguished
+                    ? "0 0 2px rgba(0,0,0,0.9)"
+                    : "0 0 4px rgba(251,191,36,0.6)",
+                }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="w-0.5 h-2.5 rounded-t-full -mb-0.5 z-30 group-hover:scale-110 transition-transform"
+              />
+
+              {/* Candle Body */}
+              <div className="w-2.5 h-16 bg-gradient-to-r from-[#ffe4e1] via-white to-[#f5c6cb] rounded-t-sm shadow-md z-20 overflow-hidden relative border border-white/50 group-hover:border-pink-300 transition-colors">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,transparent,transparent_4px,rgba(255,42,133,0.35)_4px,rgba(255,42,133,0.35)_8px)]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
               </div>
@@ -71,7 +92,10 @@ function Cake3DComponent({ stage }: Cake3DProps) {
         </div>
 
         {/* TOP TIER */}
-        <div className="relative z-40 flex flex-col items-center">
+        <div
+          onClick={onCakeClick}
+          className="relative z-40 flex flex-col items-center pointer-events-auto cursor-pointer"
+        >
           <div className="w-36 h-14 bg-gradient-to-b from-[#ffffff] to-[#faf5f0] rounded-[50%] border border-white shadow-[inset_0_-3px_6px_rgba(0,0,0,0.04)] absolute -top-7 z-20" />
           <div className="w-36 h-20 bg-gradient-to-r from-[#e8dfd8] via-[#ffffff] to-[#d6c7b8] rounded-b-[50%] shadow-[0_15px_25px_rgba(0,0,0,0.25)] relative overflow-hidden border-b border-[#c2b2a3]/30">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent w-1/2 left-1/4 skew-x-12" />
