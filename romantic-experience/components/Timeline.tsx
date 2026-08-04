@@ -2,29 +2,18 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Mic, MicOff } from "lucide-react";
 import { WishStage } from "@/types";
 import { safeConfetti, triggerCelebrationConfetti } from "@/lib/confetti";
 import { playWhooshSound } from "@/lib/audioSynthesis";
 import { Cake3D } from "./timeline/Cake3D";
+import { useBlowDetection } from "@/hooks/useBlowDetection";
 
 export default function Timeline() {
   const [stage, setStage] = useState<WishStage>("idle");
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartY = useRef<number | null>(null);
   const isBlownRef = useRef<boolean>(false);
-
-  useEffect(() => {
-    const handleContextMenu = (e: Event) => {
-      if (stage === "holding" || stage === "idle") {
-        e.preventDefault();
-      }
-    };
-    document.addEventListener("contextmenu", handleContextMenu, { passive: false });
-    return () => {
-      document.removeEventListener("contextmenu", handleContextMenu);
-      if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
-    };
-  }, [stage]);
 
   const triggerStardust = useCallback(() => {
     const end = Date.now() + 2.5 * 1000;
@@ -54,7 +43,7 @@ export default function Timeline() {
     })();
   }, []);
 
-  // Blow Out / Extinguish Candles Handler (Triggered by Tap or Press & Hold)
+  // Extinguish candles callback for microphone blow detection or manual touch
   const handleBlowOut = useCallback(() => {
     if (isBlownRef.current || stage === "darkness" || stage === "revealed") return;
     isBlownRef.current = true;
@@ -73,16 +62,43 @@ export default function Timeline() {
     }, 600);
   }, [stage, triggerStardust]);
 
+  const { micState, enableMic, stopMic } = useBlowDetection({
+    onBlowDetected: handleBlowOut,
+    enabled: stage === "idle" || stage === "holding",
+  });
+
+  useEffect(() => {
+    if (stage === "darkness" || stage === "revealed") {
+      stopMic();
+    }
+  }, [stage, stopMic]);
+
+  useEffect(() => {
+    const handleContextMenu = (e: Event) => {
+      if (stage === "holding" || stage === "idle") {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("contextmenu", handleContextMenu, { passive: false });
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
+    };
+  }, [stage]);
+
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       touchStartY.current = e.clientY;
       if (stage === "idle" && !isBlownRef.current) {
+        if (micState === "idle") {
+          enableMic();
+        }
         holdTimerRef.current = setTimeout(() => {
           setStage("holding");
         }, 150);
       }
     },
-    [stage]
+    [stage, micState, enableMic]
   );
 
   const handlePointerMove = useCallback(
@@ -152,8 +168,30 @@ export default function Timeline() {
                 <h3 className="font-serif text-2xl md:text-3xl text-neutral-200 drop-shadow-md">
                   Close your eyes & make a wish.
                 </h3>
-                <p className="font-mono text-xs uppercase tracking-[0.22em] text-[#ff2a85] drop-shadow-[0_0_8px_rgba(255,42,133,0.5)]">
-                  Press and hold the screen or tap the candles
+                <p className="font-mono text-xs uppercase tracking-[0.22em] text-[#ff2a85] drop-shadow-[0_0_8px_rgba(255,42,133,0.5)] flex items-center justify-center gap-1.5 flex-wrap">
+                  <span>Press & hold, tap candles</span>
+                  <span>•</span>
+                  {micState === "listening" ? (
+                    <span className="text-emerald-400 font-semibold flex items-center gap-1 animate-pulse">
+                      <Mic className="w-3.5 h-3.5 text-emerald-400" /> Blow into mic active
+                    </span>
+                  ) : micState === "denied" ? (
+                    <span className="text-amber-400/80 flex items-center gap-1">
+                      <MicOff className="w-3.5 h-3.5" /> Mic disabled
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        enableMic();
+                      }}
+                      className="inline-flex items-center gap-1 text-[#ff2a85] hover:text-amber-300 underline underline-offset-2 cursor-pointer transition-colors pointer-events-auto"
+                      title="Enable microphone to blow out candles"
+                    >
+                      <Mic className="w-3.5 h-3.5" /> Enable Mic 🎙️
+                    </button>
+                  )}
                 </p>
               </motion.div>
             )}
