@@ -17,7 +17,7 @@ export const MEMORIES: MemoryItem[] = [
   },
   {
     id: 3,
-    src: "/images/aarya3.jpg",
+    src: "/images/aarya3.jpeg",
     title: "Winter Magic",
     caption: "Cold hands, glowing smiles, and warmth that lasts long after sunset.",
     date: "Feb 18",

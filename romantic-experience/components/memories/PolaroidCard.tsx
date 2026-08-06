@@ -20,20 +20,20 @@ function PolaroidCardComponent({ memory, isDeveloping, onClick }: PolaroidCardPr
         !isDeveloping ? "cursor-pointer" : ""
       }`}
     >
-      <div className="w-full aspect-square bg-[#111] relative overflow-hidden shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] mb-8 sm:mb-14">
+      <div className="w-full aspect-square bg-stone-900 relative overflow-hidden shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] mb-8 sm:mb-14">
         {/* Memory Photo Image */}
         <motion.div
           animate={{
             filter: isDeveloping
               ? [
-                  "brightness(2) grayscale(1) sepia(1) contrast(0.5)",
-                  "brightness(1.5) grayscale(0.5) sepia(0.5) contrast(0.8)",
-                  "brightness(1) grayscale(0) sepia(0) contrast(1)",
+                  "brightness(1.4) sepia(0.6) contrast(0.9)",
+                  "brightness(1.2) sepia(0.3) contrast(0.95)",
+                  "brightness(1) sepia(0) contrast(1)",
                 ]
-              : "brightness(1) grayscale(0) sepia(0) contrast(1)",
-            opacity: isDeveloping ? [0.1, 0.5, 1] : 1,
+              : "brightness(1) sepia(0) contrast(1)",
+            opacity: isDeveloping ? [0.6, 0.85, 1] : 1,
           }}
-          transition={{ duration: 2.5, ease: "easeInOut", delay: 0.5 }}
+          transition={{ duration: 2.2, ease: "easeInOut" }}
           className="w-full h-full relative"
         >
           <Image
@@ -41,9 +41,9 @@ function PolaroidCardComponent({ memory, isDeveloping, onClick }: PolaroidCardPr
             alt={memory.title}
             fill
             sizes="(max-width: 640px) 220px, (max-width: 768px) 250px, 280px"
-            quality={80}
+            quality={90}
+            priority
             className="object-cover"
-            loading="lazy"
           />
         </motion.div>
       </div>
