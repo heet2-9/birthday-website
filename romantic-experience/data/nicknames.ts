@@ -1,19 +1,10 @@
 export const NICKNAMES: string[] = [
-  "Cutie ❤️",
-  "Princess 👑",
-  "Sunshine ☀️",
-  "Angel 😇",
-  "Doll 🧸",
-  "Sweetheart 💖",
-  "Cupcake 🧁",
-  "Baby 🌸",
-  "Meri Jaan ❤️",
-  "Pretty Girl ✨",
-  "Golu 🥹",
-  "Chashmish 🤓",
-  "Coffee Queen ☕",
-  "My Happiness 💕",
   "Aaru ❤️",
+  "Princess 👑",
+  "Babyy😘",
+  "Chinkii🫦",
+  "Madam jii🤭",
+  "Banni saa 💖",
 ];
 
 export const BALLOON_COLORS: string[] = [

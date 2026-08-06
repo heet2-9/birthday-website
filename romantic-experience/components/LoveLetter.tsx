@@ -69,11 +69,11 @@ export default function LoveLetter() {
           >
             {stage === "letterOpen" ? (
               <>
-                Written For <span className="italic text-[#ff2a85] text-glow">Aarya</span>
+                From her<span className="italic text-[#ff2a85] text-glow"> Heetu</span>
               </>
             ) : (
               <>
-                A Whispered <span className="italic text-[#ff2a85] text-glow">Promise</span>
+                A Letter for<span className="italic text-[#ff2a85] text-glow"> Madam Jii🤭😘</span>
               </>
             )}
           </motion.h3>

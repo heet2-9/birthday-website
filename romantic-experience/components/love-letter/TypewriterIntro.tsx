@@ -15,8 +15,16 @@ export function TypewriterIntro({ isInView, onComplete }: TypewriterIntroProps) 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/typewriter.mp3");
-    audioRef.current.volume = 0.15;
+    try {
+      const audio = new Audio("/typewriter.mp3");
+      audio.volume = 0.15;
+      audio.addEventListener("error", () => {
+        audioRef.current = null;
+      });
+      audioRef.current = audio;
+    } catch {
+      audioRef.current = null;
+    }
   }, []);
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, ReactNode } from "react";
-import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 
 // Critical top-of-page components (Loaded synchronously for zero latency & instant LCP)
@@ -10,12 +9,12 @@ import CanvasParticles from "@/components/ui/CanvasParticles";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import Hero from "@/components/Hero";
 
-// Below-the-fold experience components (Dynamically imported to optimize bundle)
-const LoveLetter = dynamic(() => import("@/components/LoveLetter"), { ssr: false });
-const NameReveal = dynamic(() => import("@/components/NameReveal"), { ssr: false });
-const MemoriesGallery = dynamic(() => import("@/components/MemoriesGallery"), { ssr: false });
-const Timeline = dynamic(() => import("@/components/Timeline"), { ssr: false });
-const FinalScene = dynamic(() => import("@/components/FinalScene"), { ssr: false });
+// Below-the-fold experience components
+import LoveLetter from "@/components/LoveLetter";
+import BouquetGenerator from "@/components/BouquetGenerator";
+import MemoriesGallery from "@/components/MemoriesGallery";
+import Timeline from "@/components/Timeline";
+import FinalScene from "@/components/FinalScene";
 
 function LazySection({ children }: { children: ReactNode }) {
   const [shouldRender, setShouldRender] = useState(false);
@@ -55,12 +54,12 @@ export default function Home() {
 
   return (
     <main className="bg-[#030303] min-h-screen text-white overflow-hidden relative">
-      {/* 1. Loading Screen Stage Overlay (Fades out smoothly without blocking LCP DOM) */}
+      {/* 1. Loading Screen Stage Overlay */}
       <AnimatePresence>
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
 
-      {/* 2. Main Romantic Experience (Rendered immediately for Instant LCP & FCP) */}
+      {/* 2. Main Romantic Experience */}
       <CanvasParticles />
 
       <SmoothScroll>
@@ -71,7 +70,7 @@ export default function Home() {
         </LazySection>
 
         <LazySection>
-          <NameReveal />
+          <BouquetGenerator />
         </LazySection>
 
         <LazySection>
