@@ -91,9 +91,9 @@ export default function MemoriesGallery() {
                     className="space-y-1.5 sm:space-y-3"
                   >
                     <h2 className="font-serif text-xl sm:text-3xl md:text-4xl text-white tracking-tight">
-                      Capturing moments that become{" "}
+                      Three moments, one girl, and a thousand reasons to fall for you all over again for{" "}
                       <span className="italic text-[#ff2a85] drop-shadow-[0_0_15px_rgba(255,42,133,0.5)]">
-                        eternity
+                        Aaru
                       </span>
                       .
                     </h2>
