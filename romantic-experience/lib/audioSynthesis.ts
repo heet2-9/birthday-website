@@ -62,3 +62,58 @@ export function playWhooshSound() {
     console.debug("Whoosh sound playback error:", err);
   }
 }
+
+/**
+ * Synthesizes a subtle typewriter key click sound natively using Web Audio API.
+ */
+export function playTypewriterClickSound() {
+  try {
+    if (typeof window === "undefined") return;
+
+    const AudioContextClass =
+      window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    const audioCtx = new AudioContextClass();
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+
+    const duration = 0.03;
+    const sampleRate = audioCtx.sampleRate;
+    const bufferSize = Math.floor(sampleRate * duration);
+    const buffer = audioCtx.createBuffer(1, bufferSize, sampleRate);
+    const data = buffer.getChannelData(0);
+
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noiseSource = audioCtx.createBufferSource();
+    noiseSource.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "highpass";
+    const now = audioCtx.currentTime;
+    filter.frequency.setValueAtTime(1200, now);
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(0.04, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    noiseSource.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    noiseSource.start(now);
+    noiseSource.stop(now + duration);
+
+    setTimeout(() => {
+      if (audioCtx.state !== "closed") {
+        audioCtx.close().catch(() => {});
+      }
+    }, (duration + 0.1) * 1000);
+  } catch (err) {
+    console.debug("Typewriter sound playback error:", err);
+  }
+}

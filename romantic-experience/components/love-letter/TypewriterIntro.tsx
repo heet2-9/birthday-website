@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { INTRO_LINES } from "@/data/story";
+import { playTypewriterClickSound } from "@/lib/audioSynthesis";
 
 interface TypewriterIntroProps {
   isInView: boolean;
@@ -12,20 +13,6 @@ interface TypewriterIntroProps {
 export function TypewriterIntro({ isInView, onComplete }: TypewriterIntroProps) {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    try {
-      const audio = new Audio("/typewriter.mp3");
-      audio.volume = 0.15;
-      audio.addEventListener("error", () => {
-        audioRef.current = null;
-      });
-      audioRef.current = audio;
-    } catch {
-      audioRef.current = null;
-    }
-  }, []);
 
   useEffect(() => {
     if (!isInView) return;
@@ -34,10 +21,7 @@ export function TypewriterIntro({ isInView, onComplete }: TypewriterIntroProps) 
     if (displayedText.length < currentLine.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(currentLine.slice(0, displayedText.length + 1));
-        if (audioRef.current && audioRef.current.readyState >= 2) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.play().catch(() => {});
-        }
+        playTypewriterClickSound();
       }, 85);
       return () => clearTimeout(timeout);
     } else {

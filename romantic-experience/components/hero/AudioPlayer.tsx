@@ -23,7 +23,7 @@ export function AudioPlayer() {
     handleSeek,
     handleVolumeChange,
     formatTime,
-  } = useAudio("/birthday-piano.mpeg");
+  } = useAudio("/sounds/Apna Bana le.mp3");
 
   return (
     <motion.div

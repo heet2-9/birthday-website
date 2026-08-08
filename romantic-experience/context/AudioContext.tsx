@@ -20,7 +20,7 @@ export interface AudioContextType {
 
 export const AudioContext = createContext<AudioContextType | null>(null);
 
-const AUDIO_SRC = "/birthday-piano.mpeg";
+const AUDIO_SRC = "/sounds/Apna Bana le.mp3";
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
